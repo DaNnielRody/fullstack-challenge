@@ -13,9 +13,9 @@ CREATE TABLE users (
     user_password VARCHAR(200) NOT NULL
 );
 
-ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'root';
+ALTER USER 'root'@'localhost' IDENTIFIED WITH caching_sha2_password BY 'root';
 
-ALTER USER 'root' IDENTIFIED WITH mysql_native_password BY 'root';
+ALTER USER 'root' IDENTIFIED WITH caching_sha2_password BY 'root';
 
 FLUSH PRIVILEGES;
 
