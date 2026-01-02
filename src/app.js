@@ -10,6 +10,8 @@ const port = Number(process.env.PORT || 8089);
 
 const path = require('path');
 
+const postRoutes = require('./modules/routes/Post/postRoutes');
+const userRoutes = require('./modules/routes/User/userRoutes');
 
 const app = express();
 app.use(express.json());
@@ -33,6 +35,14 @@ app.use(cors({
 }))
 
 app.use('/api/v1/docs', SwaggerUi.serve, SwaggerUi.setup(YAML.load(path.join(__dirname, 'config/swagger.yaml'))));
+app.use('/api/v1/post', postRoutes);
+app.use('/api/v1/user', userRoutes);
+
+
+// 'Health check' da aplicação
+app.get('/', (req, res) => {
+  res.send('Aplicação de teste prático junior fullstack - Contele');
+});
 
 app.listen(port, () => {
   console.info('Server running', { port });
