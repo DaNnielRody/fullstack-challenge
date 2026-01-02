@@ -1,11 +1,9 @@
-version: '3.5'
-
 services:
 
   mysql:
-    image: mysql:latest
+    image: mysql:9.5.0
     container_name: contele-db
-    restart: always
+    restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
@@ -14,14 +12,20 @@ services:
     volumes:
       - main:/var/lib/mysql
       - ./db/:/docker-entrypoint-initdb.d/
+    profiles: ["dev"]
     ports:
-      - ${MYSQL_PORT}:3305
+    - ${MYSQL_PORT}:3306
     healthcheck:
-      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
-      timeout: 1s
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "127.0.0.1"]
+      start_period: 30s
+      interval: 10s
+      timeout: 10s
       retries: 5
+    networks:
+      - private
 
   control-posts:
+    restart: unless-stopped
     build:
       context: .
       dockerfile: Dockerfile.dev
@@ -34,18 +38,25 @@ services:
       mysql:
         condition: service_healthy
     environment:
-      WRITER_MYSQL_HOST: ${MYSQL_HOST}
-      WRITER_MYSQL_PASS: ${MYSQL_PASSWORD}
-      WRITER_MYSQL_PORT: ${DB_PORT}
-      WRITER_MYSQL_USER: ${MYSQL_USER}
-      WRITER_MYSQL_DATABASE: ${MYSQL_DATABASE}
+      WRITER_MYSQL_HOST: mysql
+      WRITER_MYSQL_PASS: ${WRITER_MYSQL_PASS}
+      WRITER_MYSQL_PORT: ${WRITER_MYSQL_PORT}
+      WRITER_MYSQL_USER: ${WRITER_MYSQL_USER}
+      WRITER_MYSQL_DATABASE: ${WRITER_MYSQL_DATABASE}
       NODE_ENV: ${NODE_ENV}
       PORT: ${PORT}
-    links:
-      - mysql:mysql
     ports:
       - 8081:8081
       - 9229:9229
+    networks:
+      - public
+      - private
+
+networks:
+  public:
+    driver: bridge
+  private:
+    driver: bridge
 
 volumes:
   control-posts-node-modules:
