@@ -4,18 +4,18 @@ services:
 
   mysql:
     image: mysql:latest
-    container_name: mysql
+    container_name: contele-db
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: 'main'
-      MYSQL_USER: admin
-      MYSQL_PASSWORD: admin
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
       - main:/var/lib/mysql
       - ./db/:/docker-entrypoint-initdb.d/
     ports:
-      - 3305:3305
+      - ${MYSQL_PORT}:3305
     healthcheck:
       test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
       timeout: 1s
@@ -34,12 +34,13 @@ services:
       mysql:
         condition: service_healthy
     environment:
-      WRITER_MYSQL_HOST: "mysql"
-      WRITER_MYSQL_PASS: "root"
-      WRITER_MYSQL_PORT: "3305"
-      WRITER_MYSQL_USER: "root"
-      NODE_ENV: "development"
-      PORT: "8081"
+      WRITER_MYSQL_HOST: ${MYSQL_HOST}
+      WRITER_MYSQL_PASS: ${MYSQL_PASSWORD}
+      WRITER_MYSQL_PORT: ${DB_PORT}
+      WRITER_MYSQL_USER: ${MYSQL_USER}
+      WRITER_MYSQL_DATABASE: ${MYSQL_DATABASE}
+      NODE_ENV: ${NODE_ENV}
+      PORT: ${PORT}
     links:
       - mysql:mysql
     ports:
