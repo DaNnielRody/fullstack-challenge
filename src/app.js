@@ -1,20 +1,30 @@
 'use strict';
 const cors = require('cors');
-const SwaggerExpress = require('swagger-express-mw');
 const SwaggerUi = require('swagger-ui-express');
+const YAML = require('yamljs');
 const express = require('express');
 const { buildHandlers } = require('./modules');
 const { handlers } = buildHandlers();
-const port = Number(process.env.PORT || 8089)
+
+const port = Number(process.env.PORT || 8089);
+
+const path = require('path');
+
 
 const app = express();
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 const whitelist = [
-  // TODO whitelist
+  'http://localhost:8081',
+  'http://127.0.0.1:8081',
+  'http://localhost:8089',
+  'http://127.0.0.1:8089',
 ]
 
 app.use(cors({
   origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
     const allowed = whitelist.indexOf(origin) !== -1
     if (allowed) return callback(null, true);
 
@@ -22,21 +32,11 @@ app.use(cors({
   }
 }))
 
-const swaggerConfig = {
-  appRoot: __dirname,
-  swaggerFile: `${__dirname}/config/swagger.yaml`,
-};
+app.use('/api/v1/docs', SwaggerUi.serve, SwaggerUi.setup(YAML.load(path.join(__dirname, 'config/swagger.yaml'))));
 
-const onSwaggerCreated = (error, swaggerExpress) => {
-  if (error) throw error;
-
-  const swaggerDocument = swaggerExpress.runner.swagger;
-  app.use('/api/v1/docs', SwaggerUi.serve, SwaggerUi.setup(swaggerDocument));
-  swaggerExpress.register(app); // register middlewares
-  app.listen(port, () => console.info('onAppStart', { port }));
-};
-
-SwaggerExpress.create(swaggerConfig, onSwaggerCreated);
+app.listen(port, () => {
+  console.info('Server running', { port });
+});
 
 module.exports = {
   app,
