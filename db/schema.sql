@@ -3,7 +3,8 @@ USE `main`;
 CREATE TABLE posts (
     id INT PRIMARY KEY AUTO_INCREMENT,
     author_id INT NOT NULL,
-    post_text VARCHAR(200)
+    post_text VARCHAR(200),
+    FOREIGN KEY (author_id) REFERENCES users(id)
 );
 
 CREATE TABLE users (
