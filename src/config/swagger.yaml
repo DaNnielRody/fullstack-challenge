@@ -22,8 +22,6 @@ definitions:
       - "user_email"
       - "user_password"
     properties:
-      id:
-        type: "integer"
       full_name:
         type: "string"
       user_email:
