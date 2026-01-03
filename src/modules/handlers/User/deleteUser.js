@@ -6,13 +6,13 @@ const deleteUserHandler = async (req, res, next) => {
     try{
 
         const {
-            user_id
-        } = req.query;
+            id
+        } = req.params;
 
         const {
             deletedUser
         } = await deleteUserService({
-            user_id
+            user_id: id
         })
 
         return res.status(httpStatusCodes.OK).send({deletedUser})
