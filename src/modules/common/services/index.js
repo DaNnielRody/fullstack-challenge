@@ -1,3 +1,1 @@
-module.exports = Object.freeze({
-    ...require('./buildHandlers/buildHandlers')
-})
+export * from './buildHandlers/buildHandlers.js';

@@ -1,4 +1,4 @@
-const { getPostByPostIdRepositories, updatePostRepositories } = require("../../../repositories");
+import { getPostByPostIdRepositories, updatePostRepositories } from "#repositories/index.js";
 
 const updatePostService = async ({
     id,
@@ -33,6 +33,6 @@ const updatePostService = async ({
     };
 }
 
-module.exports = {
+export {
     updatePostService
-}
+};

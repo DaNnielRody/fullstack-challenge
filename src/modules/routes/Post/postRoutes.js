@@ -1,5 +1,5 @@
-const express = require('express');
-const { listPostHandler, createPostHandler, updatePostHandler, deletePostHandler } = require('../../handlers');
+import express from 'express';
+import { listPostHandler, createPostHandler, updatePostHandler, deletePostHandler } from '#handlers/index.js';
 
 const postRoutes = express.Router();
 
@@ -8,4 +8,4 @@ postRoutes.post('/', (req, res, next) => createPostHandler(req, res, next));
 postRoutes.put('/:id', (req, res, next) => updatePostHandler(req, res, next));
 postRoutes.delete('/', (req, res, next) => deletePostHandler(req, res, next));
 
-module.exports = postRoutes;
+export default postRoutes;

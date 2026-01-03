@@ -1,8 +1,8 @@
-const {
+import {
     getTransaction,
     commitTransaction,
     rollbackTransaction
-} = require('../../../common/handlers')
+} from '#common/handlers/index.js';
 
 
 const createUserRepositories = async ({
@@ -23,6 +23,6 @@ const createUserRepositories = async ({
     }
 }
 
-module.exports = {
+export {
     createUserRepositories
-}
+};

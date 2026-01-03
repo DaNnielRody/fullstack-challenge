@@ -1,11 +1,9 @@
-module.exports = Object.freeze({
-    ...require('./User/getAllUsersService/getAllUsersService'),
-    ...require('./User/getUserByIdService/getUserByIdService'),
-    ...require('./User/createUserService/createUserService'),
-    ...require('./User/deleteUserService/deleteUserService'),
-    ...require('./User/updateUserService/updateUserService'),
-    ...require('./Post/createPostService/createPostService'),
-    ...require('./Post/listPostService/listPostService'),
-    ...require('./Post/deletePostService/deletePostService'),
-    ...require('./Post/updatePostService/updatePostService')
-})
+export * from './User/getAllUsersService/getAllUsersService.js';
+export * from './User/getUserByIdService/getUserByIdService.js';
+export * from './User/createUserService/createUserService.js';
+export * from './User/deleteUserService/deleteUserService.js';
+export * from './User/updateUserService/updateUserService.js';
+export * from './Post/createPostService/createPostService.js';
+export * from './Post/listPostService/listPostService.js';
+export * from './Post/deletePostService/deletePostService.js';
+export * from './Post/updatePostService/updatePostService.js';

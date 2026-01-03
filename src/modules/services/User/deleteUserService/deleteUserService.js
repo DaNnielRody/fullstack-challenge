@@ -1,4 +1,4 @@
-const { getUserRepositories, deleteUserRepositories } = require("../../../repositories");
+import { getUserRepositories, deleteUserRepositories } from "#repositories/index.js";
 
 const deleteUserService = async ({
     user_id
@@ -27,6 +27,6 @@ const deleteUserService = async ({
     };
 }
 
-module.exports = {
+export {
     deleteUserService
-}
+};

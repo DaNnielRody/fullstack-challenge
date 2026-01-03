@@ -1,4 +1,4 @@
-const { getUserRepositories } = require("../../../repositories");
+import { getUserRepositories } from "#repositories/index.js";
 
 const getUserByIdService = async ({
     user_id
@@ -25,6 +25,6 @@ const getUserByIdService = async ({
     };
 }
 
-module.exports = {
+export {
     getUserByIdService
-}
+};

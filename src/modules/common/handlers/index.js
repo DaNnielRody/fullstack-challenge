@@ -1,4 +1,2 @@
-module.exports=Object.freeze({
-    ... require('./http-error-handler/http-error-handler'),
-    ... require('./knex/knex'),
-})
+export * from './http-error-handler/http-error-handler.js';
+export * from './knex/knex.js';

@@ -3,6 +3,15 @@
   "version": "1.0.0",
   "description": "Teste Prático Junior Fullstack - Contele",
   "main": "./src/app.js",
+  "type": "module",
+  "imports": {
+    "#modules/*": "./src/modules/*",
+    "#handlers/*": "./src/modules/handlers/*",
+    "#services/*": "./src/modules/services/*",
+    "#repositories/*": "./src/modules/repositories/*",
+    "#common/handlers/*": "./src/modules/common/handlers/*",
+    "#routes/*": "./src/modules/routes/*"
+  },
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.5",

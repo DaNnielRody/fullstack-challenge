@@ -1,6 +1,7 @@
-const bcrypt = require('bcryptjs');
+import bcrypt from 'bcryptjs';
+import { createUserRepositories } from "#repositories/index.js";
+
 const salt = bcrypt.genSaltSync(10);
-const { createUserRepositories } = require("../../../repositories");
 
 const createUserService = async (user) => {
 
@@ -28,6 +29,6 @@ const createUserService = async (user) => {
     };
 }
 
-module.exports = {
+export {
     createUserService
-}
+};

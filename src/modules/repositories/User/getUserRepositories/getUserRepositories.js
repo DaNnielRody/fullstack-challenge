@@ -1,17 +1,17 @@
-const { 
-    client
-} = require('../../../common/handlers')
+import { 
+    knex
+} from '#common/handlers/index.js';
 
 
 const getUserRepositories = async ({
     user_id
 } = {}) => {
 
-    const users = await client('users').where({ id: user_id })
+    const users = await knex('users').where({ id: user_id })
 
     return {
         users
     };
 };
 
-module.exports = { getUserRepositories };
+export { getUserRepositories };
