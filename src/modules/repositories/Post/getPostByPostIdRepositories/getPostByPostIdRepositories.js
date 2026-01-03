@@ -1,6 +1,6 @@
 import { 
     knex,
-} from '../../../common/handlers/index.js';
+} from '#common/handlers/index.js';
 
 
 

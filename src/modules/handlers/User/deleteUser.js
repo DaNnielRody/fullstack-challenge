@@ -1,6 +1,6 @@
 import httpStatusCodes from 'http-status-codes';
-import { httpErrorHandler } from "../../common/handlers/index.js";
-import { deleteUserService } from '../../services/index.js';
+import { httpErrorHandler } from "#common/handlers/index.js";
+import { deleteUserService } from '#services/index.js';
 
 const deleteUserHandler = async (req, res, next) => {
     try{

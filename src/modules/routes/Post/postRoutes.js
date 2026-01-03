@@ -1,5 +1,5 @@
 import express from 'express';
-import { listPostHandler, createPostHandler, updatePostHandler, deletePostHandler } from '../../handlers/index.js';
+import { listPostHandler, createPostHandler, updatePostHandler, deletePostHandler } from '#handlers/index.js';
 
 const postRoutes = express.Router();
 

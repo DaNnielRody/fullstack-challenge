@@ -1,4 +1,4 @@
-import { getPostByPostIdRepositories, deletePostRepositories } from "../../../repositories/index.js";
+import { getPostByPostIdRepositories, deletePostRepositories } from "#repositories/index.js";
 
 const deletePostService = async ({
     post_id

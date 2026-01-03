@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import { getUserRepositories, updateUserRepositories } from "../../../repositories/index.js";
+import { getUserRepositories, updateUserRepositories } from "#repositories/index.js";
 
 const salt = bcrypt.genSaltSync(10);
 

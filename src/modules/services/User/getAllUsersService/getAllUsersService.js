@@ -1,4 +1,4 @@
-import { getUsersRepositories } from "../../../repositories/index.js";
+import { getUsersRepositories } from "#repositories/index.js";
 
 const getAllUsersService = async () => {
 
