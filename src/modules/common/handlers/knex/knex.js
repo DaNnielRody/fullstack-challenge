@@ -1,6 +1,6 @@
-'use strict'
+import knexLib from 'knex';
 
-const knex = require('knex')({
+const knex = knexLib({
     client: 'mysql2',
     connection: {
       host: process.env.WRITER_MYSQL_HOST,
@@ -26,4 +26,4 @@ const commitTransaction = ({ transaction }) => transaction.commit();
 
 const rollbackTransaction = ({ transaction }) => transaction.rollback();
 
-module.exports = { getTransaction, commitTransaction, rollbackTransaction, client: knex };
+export { getTransaction, commitTransaction, rollbackTransaction, knex };

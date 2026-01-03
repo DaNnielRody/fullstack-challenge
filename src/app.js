@@ -1,19 +1,20 @@
-'use strict';
-require('dotenv').config();
+import 'dotenv/config';
+import cors from 'cors';
+import SwaggerUi from 'swagger-ui-express';
+import YAML from 'yamljs';
+import express from 'express';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import { buildHandlers } from './modules/index.js';
+import postRoutes from './modules/routes/Post/postRoutes.js';
+import userRoutes from './modules/routes/User/userRoutes.js';
 
-const cors = require('cors');
-const SwaggerUi = require('swagger-ui-express');
-const YAML = require('yamljs');
-const express = require('express');
-const { buildHandlers } = require('./modules');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 const { handlers } = buildHandlers();
-
 const port = Number(process.env.PORT || 8089);
-
-const path = require('path');
-
-const postRoutes = require('./modules/routes/Post/postRoutes');
-const userRoutes = require('./modules/routes/User/userRoutes');
 
 const app = express();
 app.use(express.json());
@@ -50,7 +51,7 @@ app.listen(port, () => {
   console.info('Server running', { port });
 });
 
-module.exports = {
+export {
   app,
-  ...handlers
+  handlers
 };

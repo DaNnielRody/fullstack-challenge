@@ -1,5 +1,5 @@
-const express = require('express');
-const { listUserHandler, createUserHandler, updateUserHandler, deleteUserHandler } = require('../../handlers');
+import express from 'express';
+import { listUserHandler, createUserHandler, updateUserHandler, deleteUserHandler } from '../../handlers/index.js';
 
 const userRoutes = express.Router();
 
@@ -8,4 +8,4 @@ userRoutes.post('/', (req, res, next) => createUserHandler(req, res, next));
 userRoutes.put('/:id', (req, res, next) => updateUserHandler(req, res, next));
 userRoutes.delete('/', (req, res, next) => deleteUserHandler(req, res, next));
 
-module.exports = userRoutes;
+export default userRoutes;

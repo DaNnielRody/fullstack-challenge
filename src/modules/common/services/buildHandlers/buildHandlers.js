@@ -1,6 +1,4 @@
-'use strict'
-
-const {
+import {
     listUserHandler,
     createUserHandler,
     updateUserHandler,
@@ -9,7 +7,7 @@ const {
     createPostHandler,
     updatePostHandler,
     deletePostHandler
-} = require('../../../handlers')
+} from '../../../handlers/index.js';
 
 const buildHandlers = () => {
     return {
@@ -26,6 +24,6 @@ const buildHandlers = () => {
     }
 }
 
-module.exports = {
+export {
     buildHandlers
-}
+};

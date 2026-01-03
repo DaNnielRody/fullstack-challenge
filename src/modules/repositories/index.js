@@ -1,12 +1,10 @@
-module.exports = Object.freeze({
-    ...require('./User/getUserRepositories/getUserRepositories'),
-    ...require('./User/getUsersRepositories/getUsersRepositories'),
-    ...require('./User/createUsersRepositories/createUsersRepositories'),
-    ...require('./User/deleteUserRepositories/deleteUserRepositories'),
-    ...require('./User/updateUserRepositories/updateUserRepositories'),
-    ...require('./Post/createPostRepositories/createPostRepositories'),
-    ...require('./Post/deletePostRepositories/deletePostRepositories'),
-    ...require('./Post/getPostByPostIdRepositories/getPostByPostIdRepositories'),
-    ...require('./Post/getPostByUserIdRepositories/getPostByUserIdRepositories'),
-    ...require('./Post/updatePostRepositories/updatePostRepositories')
-})
+export * from './User/getUserRepositories/getUserRepositories.js';
+export * from './User/getUsersRepositories/getUsersRepositories.js';
+export * from './User/createUsersRepositories/createUsersRepositories.js';
+export * from './User/deleteUserRepositories/deleteUserRepositories.js';
+export * from './User/updateUserRepositories/updateUserRepositories.js';
+export * from './Post/createPostRepositories/createPostRepositories.js';
+export * from './Post/deletePostRepositories/deletePostRepositories.js';
+export * from './Post/getPostByPostIdRepositories/getPostByPostIdRepositories.js';
+export * from './Post/getPostByUserIdRepositories/getPostByUserIdRepositories.js';
+export * from './Post/updatePostRepositories/updatePostRepositories.js';

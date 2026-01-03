@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   collectCoverage: true,
   coveragePathIgnorePatterns: ['/node_modules/', '.mock.js'],
   testEnvironment: 'node',

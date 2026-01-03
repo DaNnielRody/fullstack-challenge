@@ -1,6 +1,4 @@
-module.exports = Object.freeze({
-    ...require('./handlers'),
-    ...require('./repositories'),
-    ...require('./services'),
-    ...require('./common')
-})
+export * from './handlers/index.js';
+export * from './repositories/index.js';
+export * from './services/index.js';
+export * from './common/index.js';

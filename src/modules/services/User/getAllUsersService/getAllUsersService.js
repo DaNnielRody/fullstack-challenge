@@ -1,4 +1,4 @@
-const { getUsersRepositories } = require("../../../repositories");
+import { getUsersRepositories } from "../../../repositories/index.js";
 
 const getAllUsersService = async () => {
 
@@ -14,6 +14,6 @@ const getAllUsersService = async () => {
     };
 }
 
-module.exports = {
+export {
     getAllUsersService
-}
+};

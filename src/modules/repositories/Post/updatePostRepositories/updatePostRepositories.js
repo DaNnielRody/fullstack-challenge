@@ -1,8 +1,8 @@
-const {
+import {
     getTransaction,
     commitTransaction,
     rollbackTransaction
-} = require('../../../common/handlers')
+} from '../../../common/handlers/index.js';
 
 const updatePostRepositories = async ({
     id,
@@ -29,6 +29,6 @@ const updatePostRepositories = async ({
     }
 }
 
-module.exports = {
+export {
     updatePostRepositories
-}
+};
