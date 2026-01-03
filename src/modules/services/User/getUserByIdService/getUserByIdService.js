@@ -1,4 +1,4 @@
-import { getUserRepositories } from "#repositories/index.js";
+import { getUsersByIdRepositories } from "#repositories/index.js";
 
 const getUserByIdService = async ({
     user_id
@@ -13,7 +13,7 @@ const getUserByIdService = async ({
 
     const {
         users = []
-    } = await getUserRepositories({
+    } = await getUsersByIdRepositories({
         user_id
     });
 

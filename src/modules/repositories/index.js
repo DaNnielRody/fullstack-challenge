@@ -1,5 +1,6 @@
 export * from './User/getUserRepositories/getUserRepositories.js';
 export * from './User/getUsersRepositories/getUsersRepositories.js';
+export * from './User/getUsersByIdRepositories/getUsersByIdRepositories.js';
 export * from './User/createUsersRepositories/createUsersRepositories.js';
 export * from './User/deleteUserRepositories/deleteUserRepositories.js';
 export * from './User/updateUserRepositories/updateUserRepositories.js';
