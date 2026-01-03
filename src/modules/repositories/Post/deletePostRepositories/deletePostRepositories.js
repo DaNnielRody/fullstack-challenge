@@ -5,18 +5,22 @@ const {
 } = require('../../../common/handlers')
 
 const deletePostRepositories = async (
-    post_id
+    {post_id}
 ) => {
     const { transaction } = await getTransaction();
 
     try {
-        await transaction('posts').del()
+        const deleted = await transaction('posts').where({ id: post_id }).del()
 
         await commitTransaction({transaction})
+
+        return {
+            deleted
+        }
         
     } catch (err) {
-        rollbackTransaction({transaction})
-        throw new Error(err)
+        await rollbackTransaction({transaction})
+        throw err
     }
 }
 

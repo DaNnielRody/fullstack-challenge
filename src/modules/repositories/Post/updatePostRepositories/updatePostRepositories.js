@@ -13,16 +13,19 @@ const updatePostRepositories = async ({
 
     try {
 
-        await transaction('posts').where({ id }).update({
-            id,
+        const rowsAffected = await transaction('posts').where({ id }).update({
             author_id,
             post_text
         })
 
+        await commitTransaction({ transaction })
 
+        return {
+            rowsAffected
+        };
     } catch (err) {
-        rollbackTransaction({ transaction })
-        throw new Error(err)
+        await rollbackTransaction({ transaction })
+        throw err
     }
 }
 
