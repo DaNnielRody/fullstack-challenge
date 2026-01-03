@@ -5,4 +5,5 @@ export * from './Posts/deletePost.js';
 export * from './User/createUser.js';
 export * from './User/updateUser.js';
 export * from './User/listUsers.js';
+export * from './User/listUserById.js';
 export * from './User/deleteUser.js';
