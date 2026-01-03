@@ -1,8 +1,8 @@
-const {
+import {
     getTransaction,
     commitTransaction,
     rollbackTransaction
-} = require('../../../common/handlers')
+} from '../../../common/handlers/index.js';
 
 const deletePostRepositories = async (
     {post_id}
@@ -24,6 +24,6 @@ const deletePostRepositories = async (
     }
 }
 
-module.exports = {
+export {
     deletePostRepositories
-}
+};

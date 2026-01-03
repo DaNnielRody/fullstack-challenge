@@ -1,7 +1,6 @@
-'use strict'
-const httpStatusCodes = require('http-status-codes');
-const { httpErrorHandler } = require("../../common/handlers");
-const { updateUserService } = require('../../services');
+import httpStatusCodes from 'http-status-codes';
+import { httpErrorHandler } from "../../common/handlers/index.js";
+import { updateUserService } from '../../services/index.js';
 
 const updateUserHandler = async (req, res, next) => {
     try{
@@ -25,6 +24,6 @@ const updateUserHandler = async (req, res, next) => {
     }
 }
 
-module.exports = {
+export {
     updateUserHandler
-}
+};

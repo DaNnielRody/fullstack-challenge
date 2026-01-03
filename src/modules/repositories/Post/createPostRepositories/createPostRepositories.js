@@ -1,8 +1,8 @@
-const {
+import {
     getTransaction,
     commitTransaction,
     rollbackTransaction
-} = require('../../../common/handlers')
+} from '../../../common/handlers/index.js';
 
 
 const createPostRepositories = async ({
@@ -23,6 +23,6 @@ const createPostRepositories = async ({
     }
 }
 
-module.exports = {
+export {
     createPostRepositories
-}
+};

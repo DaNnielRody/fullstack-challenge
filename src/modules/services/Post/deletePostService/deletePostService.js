@@ -1,4 +1,4 @@
-const { getPostByPostIdRepositories, deletePostRepositories } = require("../../../repositories");
+import { getPostByPostIdRepositories, deletePostRepositories } from "../../../repositories/index.js";
 
 const deletePostService = async ({
     post_id
@@ -27,6 +27,6 @@ const deletePostService = async ({
     };
 }
 
-module.exports = {
+export {
     deletePostService
-}
+};

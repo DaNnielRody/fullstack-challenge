@@ -1,5 +1,5 @@
-const { getUserByIdService } = require("../../User/getUserByIdService/getUserByIdService");
-const { getPostByUserIdRepositories } = require("../../../repositories");
+import { getUserByIdService } from "../../User/getUserByIdService/getUserByIdService.js";
+import { getPostByUserIdRepositories } from "../../../repositories/index.js";
 
 const getPostByUserIdService = async ({
     user_id
@@ -28,6 +28,6 @@ const getPostByUserIdService = async ({
     };
 }
 
-module.exports = {
+export {
     getPostByUserIdService
-}
+};
