@@ -7,7 +7,7 @@ import {
     createPostHandler,
     updatePostHandler,
     deletePostHandler
-} from '../../../handlers/index.js';
+} from '#handlers/index.js';
 
 const buildHandlers = () => {
     return {

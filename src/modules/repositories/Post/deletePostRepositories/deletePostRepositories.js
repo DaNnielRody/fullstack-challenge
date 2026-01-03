@@ -2,7 +2,7 @@ import {
     getTransaction,
     commitTransaction,
     rollbackTransaction
-} from '../../../common/handlers/index.js';
+} from '#common/handlers/index.js';
 
 const deletePostRepositories = async (
     {post_id}

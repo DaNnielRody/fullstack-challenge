@@ -1,4 +1,4 @@
-import { getPostByPostIdRepositories, updatePostRepositories } from "../../../repositories/index.js";
+import { getPostByPostIdRepositories, updatePostRepositories } from "#repositories/index.js";
 
 const updatePostService = async ({
     id,

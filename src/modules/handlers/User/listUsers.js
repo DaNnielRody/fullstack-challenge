@@ -1,9 +1,9 @@
 import httpStatusCodes from 'http-status-codes';
-import { httpErrorHandler } from '../../common/handlers/index.js';
+import { httpErrorHandler } from '#common/handlers/index.js';
 import { 
     getUserByIdService, 
     getAllUsersService 
-} from '../../services/index.js';
+} from '#services/index.js';
 
 const listUserHandler = async (req, res, next) => {
     try{

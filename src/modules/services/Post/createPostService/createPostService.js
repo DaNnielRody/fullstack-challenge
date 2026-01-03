@@ -1,5 +1,5 @@
-import { getUserByIdService } from "../../User/getUserByIdService/getUserByIdService.js";
-import { createPostRepositories } from "../../../repositories/index.js";
+import { getUserByIdService } from "#services/User/getUserByIdService/getUserByIdService.js";
+import { createPostRepositories } from "#repositories/index.js";
 
 const createPostService = async (post) => {
 

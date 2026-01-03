@@ -1,5 +1,5 @@
 import express from 'express';
-import { listUserHandler, createUserHandler, updateUserHandler, deleteUserHandler } from '../../handlers/index.js';
+import { listUserHandler, createUserHandler, updateUserHandler, deleteUserHandler } from '#handlers/index.js';
 
 const userRoutes = express.Router();
 

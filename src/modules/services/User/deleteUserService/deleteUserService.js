@@ -1,4 +1,4 @@
-import { getUserRepositories, deleteUserRepositories } from "../../../repositories/index.js";
+import { getUserRepositories, deleteUserRepositories } from "#repositories/index.js";
 
 const deleteUserService = async ({
     user_id

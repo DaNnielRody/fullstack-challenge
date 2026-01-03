@@ -2,7 +2,7 @@ import {
     getTransaction,
     commitTransaction,
     rollbackTransaction
-} from '../../../common/handlers/index.js';
+} from '#common/handlers/index.js';
 
 const updateUserRepositories = async ({
     id,
