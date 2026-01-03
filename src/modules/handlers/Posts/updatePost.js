@@ -5,8 +5,8 @@ const { updatePostService } = require('../../services');
 
 const updatePostHandler = async (req, res, next) => {
     try{
+        const { id } = req.params;
         const {
-            id,
             author_id,
             post_text
         } = req.body
