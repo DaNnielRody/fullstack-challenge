@@ -1,4 +1,6 @@
 'use strict';
+require('dotenv').config();
+
 const cors = require('cors');
 const SwaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
