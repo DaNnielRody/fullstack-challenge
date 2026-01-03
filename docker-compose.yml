@@ -30,10 +30,10 @@ services:
       context: .
       dockerfile: Dockerfile.dev
     container_name: control-posts
-    working_dir: /control-posts
     volumes:
-      - control-posts-node-modules:/control-posts/node_modules
-      - ./:/control-posts
+      - control-posts-node-modules:/app/node_modules
+      - ./:/app
+      - ./logs:/app/logs
     depends_on:
       mysql:
         condition: service_healthy
@@ -45,6 +45,8 @@ services:
       WRITER_MYSQL_DATABASE: ${WRITER_MYSQL_DATABASE}
       NODE_ENV: ${NODE_ENV}
       PORT: ${PORT}
+      LOG_DIR: ${LOG_DIR}
+      LOG_LEVEL: ${LOG_LEVEL}
     ports:
       - 8081:8081
       - 9229:9229

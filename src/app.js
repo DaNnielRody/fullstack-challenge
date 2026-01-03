@@ -7,6 +7,8 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { buildHandlers } from '#modules/index.js';
+import { logger } from '#common/services/logger/logger.js';
+import { loggerMiddleware } from './modules/common/middlewares/logger-middleware/logger-middleware.js';
 import postRoutes from '#routes/Post/postRoutes.js';
 import userRoutes from '#routes/User/userRoutes.js';
 
@@ -19,6 +21,7 @@ const port = Number(process.env.PORT || 8089);
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(loggerMiddleware);
 
 const whitelist = [
   'http://localhost:8081',
@@ -48,7 +51,7 @@ app.get('/', (req, res) => {
 });
 
 app.listen(port, () => {
-  console.info('Server running', { port });
+  logger.info('Server running', { port });
 });
 
 export {
