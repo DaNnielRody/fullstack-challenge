@@ -5,8 +5,8 @@ const { updateUserService } = require('../../services');
 
 const updateUserHandler = async (req, res, next) => {
     try{
+        const { id } = req.params;
         const {
-            id,
             user_email,
             user_password,
             full_name

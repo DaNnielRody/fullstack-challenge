@@ -80,6 +80,7 @@ paths:
           description: "success"
           schema:
             $ref: "#/definitions/user"
+  /user/{id}:
     put:
       tags:
         - "Users"
@@ -87,6 +88,11 @@ paths:
       summary: update user
       operationId: updateUserHandler
       parameters:
+        - name: id
+          in: path
+          type: integer
+          required: true
+          description: User ID
         - in: body
           name: user
           description: update user
@@ -94,13 +100,10 @@ paths:
             additionalProperties: false
             type: "object"
             required:
-              - "id"
               - "full_name"
               - "user_email"
               - "user_password"
             properties:
-              id:
-                type: "integer"
               full_name:
                 type: "string"
               user_email:
@@ -173,6 +176,7 @@ paths:
           description: "success"
           schema:
             $ref: "#/definitions/post"
+  /post/{id}:
     put:
       tags:
         - "Posts"
@@ -180,6 +184,11 @@ paths:
       summary: update post
       operationId: updatePostHandler
       parameters:
+        - name: id
+          in: path
+          type: integer
+          required: true
+          description: Post ID
         - in: body
           name: post
           description: update post
@@ -187,12 +196,9 @@ paths:
             additionalProperties: false
             type: "object"
             required:
-              - "id"
               - "author_id"
               - "post_text"
             properties:
-              id:
-                type: "integer"
               author_id:
                 type: "integer"
               post_text:
