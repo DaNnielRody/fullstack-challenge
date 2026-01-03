@@ -10,13 +10,17 @@ const deleteUserRepositories = async ({
     const { transaction } = await getTransaction();
 
     try {
-        await transaction('users').where({id: user_id}).del()
+        const rowsAffected = await transaction('users').where({id: user_id}).del()
 
         await commitTransaction({transaction})
+
+        return {
+            rowsAffected
+        }
         
     } catch (err) {
-        rollbackTransaction({transaction})
-        throw new Error(err)
+        await rollbackTransaction({transaction})
+        throw err
     }
 }
 

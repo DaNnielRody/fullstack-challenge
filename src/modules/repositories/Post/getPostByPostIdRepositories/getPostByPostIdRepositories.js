@@ -1,6 +1,5 @@
 const { 
     client,
-    getTransaction,
 } = require('../../../common/handlers');
 
 
@@ -8,24 +7,9 @@ const {
 const getPostByPostIdRepositories = async ({
     post_id
 } = {}) => {
-    const { transaction } = await getTransaction();
+    const posts = await client('posts').where({ id: post_id })
 
-    const response = await transaction('posts').where({ id: post_id })
+    return { posts };
+};
 
-    const has_response = Array.isArray(response) && response.length === 0;
-
-    if(!has_response){
-        return {
-            posts: []
-        }
-    }
-
-    return {
-        posts: response
-    }
-
-}
-
-module.exports = {
-    getPostByPostIdRepositories
-}
+module.exports = { getPostByPostIdRepositories };

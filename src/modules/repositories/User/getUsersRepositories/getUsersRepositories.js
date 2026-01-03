@@ -5,22 +5,11 @@ const {
 
 const getUsersRepositories = async () => {
 
-    const response = await client('users')
-    
-    const has_response = Array.isArray(response) && response.length > 0;
-
-    if(!has_response){
-        return {
-            users: []
-        }
-    }
+    const users = await client('users')
 
     return {
-        users: response
+        users
     }
+};
 
-}
-
-module.exports = {
-    getUsersRepositories
-}
+module.exports = { getUsersRepositories };

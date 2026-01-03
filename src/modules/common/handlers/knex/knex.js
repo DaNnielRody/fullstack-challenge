@@ -22,7 +22,7 @@ const getTransaction = async () => {
     return {transaction};
 }
 
-const commitTransaction = ({ transaction }) => transaction.rollback();
+const commitTransaction = ({ transaction }) => transaction.commit();
 
 const rollbackTransaction = ({ transaction }) => transaction.rollback();
 

@@ -14,20 +14,22 @@ const updateUserRepositories = async ({
 
     try {
 
-        await transaction('users').update({
+        const rowsAffected = await transaction('users').where({ id }).update({
             user_email,
             user_password,
             full_name
-        })
+        });
 
         await commitTransaction({ transaction })
 
+        return {
+            rowsAffected
+        }
+
     } catch (err) {
-        rollbackTransaction({ transaction })
-        throw new Error(err)
+        await rollbackTransaction({ transaction })
+        throw err
     }
 }
 
-module.exports = {
-    updateUserRepositories
-}
+module.exports = { updateUserRepositories };
