@@ -15,30 +15,30 @@ import {
 const salt = bcrypt.genSaltSync(10);
 
 const updateUserService = async ({
-  id,
+  user_id,
   user_email,
   user_password,
   full_name,
 }) => {
   try {
-    if (!Number.isInteger(id) || id <= 0) {
+    if (!Number.isInteger(user_id) || user_id <= 0) {
       const error = new UserValidationError(
         'Invalid user id: must be a positive integer',
-        { user_id: id }
+        { user_id }
       );
-      logError('UPDATE', 'USER', error, { user_id: id });
+      logError('UPDATE', 'USER', error, { user_id });
       throw error;
     }
 
     const { users = [] } = await getUserRepositories({
-      user_id: id,
+      user_id,
     });
 
     const has_user = Array.isArray(users) && users.length === 1;
 
     if (!has_user) {
-      const error = new UserNotFoundError(id);
-      logError('UPDATE', 'USER', error, { user_id: id });
+      const error = new UserNotFoundError(user_id);
+      logError('UPDATE', 'USER', error, { user_id });
       throw error;
     }
 
@@ -51,7 +51,7 @@ const updateUserService = async ({
 
       if (existingUsers.length > 0) {
         const error = new UserEmailAlreadyExistsError(user_email);
-        logError('UPDATE', 'USER', error, { user_id: id, user_email });
+        logError('UPDATE', 'USER', error, { user_id, user_email });
         throw error;
       }
     }
@@ -61,26 +61,26 @@ const updateUserService = async ({
       : currentUser.user_password;
 
     await updateUserRepositories({
-      id,
+      user_id,
       user_email,
       user_password: crypt_password,
       full_name,
     });
 
     logUpdate('USER', {
-      user_id: id,
+      user_id,
       user_email,
       full_name,
     });
 
     return {
-      id,
+      user_id,
       user_email,
       full_name,
     };
   } catch (error) {
     handleServiceError('UPDATE', 'USER', error, {
-      user_id: id,
+      user_id,
       user_email,
     });
   }

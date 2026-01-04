@@ -1,7 +1,7 @@
 import { knex } from '#common/handlers/index.js';
 
 const getAllPostsRepositories = async () => {
-  const posts = await knex('posts').select('id', 'author_id', 'post_text');
+  const posts = await knex('posts').select('post_id', 'author_id', 'post_text');
 
   return {
     posts,
@@ -9,4 +9,3 @@ const getAllPostsRepositories = async () => {
 };
 
 export { getAllPostsRepositories };
-

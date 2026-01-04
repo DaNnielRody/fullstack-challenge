@@ -6,22 +6,22 @@ import { logError } from '#common/services/logger/logger.js';
 
 const deletePostHandler = async (req, res, next) => {
   try {
-    const postId = Number(req.params.id);
+    const post_id = Number(req.params.id);
 
-    if (!Number.isInteger(postId) || postId <= 0) {
+    if (!Number.isInteger(post_id) || post_id <= 0) {
       const error = new PostValidationError(
         'Invalid post id: must be a positive integer',
-        { post_id: postId }
+        { post_id }
       );
-      logError('DELETE', 'POST', error, { post_id: postId });
+      logError('DELETE', 'POST', error, { post_id });
       throw error;
     }
 
-    const { deletedPost } = await deletePostService({
-      post_id: postId,
+    await deletePostService({
+      post_id,
     });
 
-    return res.status(httpStatusCodes.OK).send({ deletedPost });
+    return res.status(httpStatusCodes.NO_CONTENT).send();
   } catch (error) {
     return httpErrorHandler({ req, res, error });
   }

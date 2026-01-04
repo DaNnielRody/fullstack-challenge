@@ -2,8 +2,8 @@ import { knex } from '#common/handlers/index.js';
 
 const getUsersByIdRepositories = async ({ user_id } = {}) => {
   const users = await knex('users')
-    .select('id', 'user_email', 'full_name')
-    .where({ id: user_id });
+    .select('user_id', 'user_email', 'full_name')
+    .where({ user_id });
   return { users };
 };
 

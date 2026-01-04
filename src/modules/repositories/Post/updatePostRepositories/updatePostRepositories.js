@@ -4,7 +4,7 @@ import {
   rollbackTransaction,
 } from '#common/handlers/index.js';
 
-const updatePostRepositories = async ({ id, author_id, post_text }) => {
+const updatePostRepositories = async ({ post_id, author_id, post_text }) => {
   const { transaction } = await getTransaction();
 
   try {
@@ -18,7 +18,7 @@ const updatePostRepositories = async ({ id, author_id, post_text }) => {
     }
 
     const rowsAffected = await transaction('posts')
-      .where({ id })
+      .where({ post_id })
       .update(updateData);
 
     await commitTransaction({ transaction });

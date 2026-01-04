@@ -6,19 +6,19 @@ import { logError } from '#common/services/logger/logger.js';
 
 const listUserByIdHandler = async (req, res, next) => {
   try {
-    const id = Number(req.params.id);
+    const user_id = Number(req.params.id);
 
-    if (!Number.isInteger(id) || id <= 0) {
+    if (!Number.isInteger(user_id) || user_id <= 0) {
       const error = new UserValidationError(
         'Invalid user id: must be a positive integer',
-        { user_id: id }
+        { user_id }
       );
-      logError('READ', 'USER', error, { user_id: id });
+      logError('READ', 'USER', error, { user_id });
       throw error;
     }
 
-    const { user } = await getUserByIdService({ user_id: id });
-    return res.status(httpStatusCodes.OK).send({ users: user });
+    const { user } = await getUserByIdService({ user_id });
+    return res.status(httpStatusCodes.OK).send(user);
   } catch (error) {
     return httpErrorHandler({ req, res, error });
   }

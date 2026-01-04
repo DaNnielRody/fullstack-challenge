@@ -35,11 +35,11 @@ const deletePostService = async ({ post_id }) => {
     const [post_to_delete] = posts;
 
     await deletePostRepositories({
-      post_id: post_to_delete.id,
+      post_id: post_to_delete.post_id,
     });
 
     logDelete('POST', {
-      post_id: post_to_delete.id,
+      post_id: post_to_delete.post_id,
       author_id: post_to_delete.author_id,
     });
 
