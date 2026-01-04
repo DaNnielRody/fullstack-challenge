@@ -9,65 +9,73 @@ const httpErrorHandler = ({ req, res, error }) => {
     response_status_code === StatusCodes.INTERNAL_SERVER_ERROR;
   const is_domain_error = error instanceof DomainError;
   const error_id = uuidv4();
+  const is_critical = response_status_code >= 500;
 
   let response = {};
 
   if (is_domain_error) {
     response = {
-      type: error.name,
+      error_id,
+      code: error.code || 'INTERNAL_ERROR',
       message: error.message,
     };
 
     if (error.details) {
       response.details = error.details;
     }
-    if (error.user_id) {
-      response.user_id = error.user_id;
-    }
-    if (error.post_id) {
-      response.post_id = error.post_id;
-    }
-    if (error.author_id) {
-      response.author_id = error.author_id;
-    }
-    if (error.email) {
-      response.email = error.email;
-    }
-    if (error.entityId) {
-      response.entity_id = error.entityId;
-    }
-    if (error.referenceId) {
-      response.reference_id = error.referenceId;
-    }
   } else if (is_internal) {
     response = {
-      type: `internal server error (${error_id})`,
+      error_id,
+      code: 'INTERNAL_ERROR',
     };
   } else {
     response = {
+      error_id,
+      code: 'INTERNAL_ERROR',
       message: error.message,
       details: error.details || error,
     };
   }
 
-  const error_context = {
-    error: String(error),
+  const logEntry = {
+    timestamp: new Date().toISOString(),
+    level: is_critical ? 'error' : 'warn',
     error_id,
-    error_name: error.name,
-    is_domain_error,
+    error_code: error.code || 'INTERNAL_ERROR',
+    message: error.message,
     request: {
-      headers: req.headers || {},
-      host: req.get('host') || '',
-      response_status_code: response_status_code || 0,
-      params: req.params || {},
-      path: req.originalUrl || '',
-      protocol: req.protocol || '',
-      query: req.query || {},
+      method: req.method,
+      path: req.originalUrl || req.path,
+      status: response_status_code,
+      ip: req.ip || req.headers['x-forwarded-for']?.split(',')[0]?.trim(),
+      user_agent: (() => {
+        const ua = req.headers['user-agent'];
+        if (!ua) return undefined;
+        const chromeMatch = ua.match(/Chrome\/([^\s]+)/);
+        if (chromeMatch) return `Chrome/${chromeMatch[1]}`;
+        const firefoxMatch = ua.match(/Firefox\/([^\s]+)/);
+        if (firefoxMatch) return `Firefox/${firefoxMatch[1]}`;
+        const safariMatch = ua.match(/Safari\/([^\s]+)/);
+        if (safariMatch) return `Safari/${safariMatch[1]}`;
+        return ua.split(' ')[0];
+      })(),
     },
-    response,
-    stack: error.stack,
+    context: {
+      ...(error.email && { email: error.email }),
+      ...(error.user_id && { user_id: error.user_id }),
+      ...(error.post_id && { post_id: error.post_id }),
+      ...(error.author_id && { author_id: error.author_id }),
+      ...(error.entityId && { entity_id: error.entityId }),
+      ...(error.referenceId && { reference_id: error.referenceId }),
+    },
   };
-  console.log(JSON.stringify(error_context));
+
+  if (is_critical) {
+    logEntry.stack = error.stack;
+    logEntry.error_name = error.name;
+  }
+
+  console.error(JSON.stringify(logEntry));
 
   return res.status(response_status_code).json(response).end();
 };

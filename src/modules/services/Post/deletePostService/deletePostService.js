@@ -2,7 +2,7 @@ import {
   getPostByPostIdRepositories,
   deletePostRepositories,
 } from '#repositories/index.js';
-import { logDelete } from '#common/services/logger/logger.js';
+import { logDelete, logError } from '#common/services/logger/logger.js';
 import {
   PostNotFoundError,
   PostValidationError,
@@ -11,7 +11,7 @@ import {
 
 const deletePostService = async ({ post_id }) => {
   try {
-    if (Number.isInteger(post_id) && post_id > 0) {
+    if (!Number.isInteger(post_id) || post_id <= 0) {
       const error = new PostValidationError(
         'Invalid post id: must be a positive integer',
         { post_id }

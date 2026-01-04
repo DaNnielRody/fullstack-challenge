@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 import { createUserRepositories } from '#repositories/index.js';
-import { logCreate } from '#common/services/logger/logger.js';
+import { logCreate, logError } from '#common/services/logger/logger.js';
 import { UserCreationError, handleServiceError } from '#common/errors/index.js';
 
 const salt = bcrypt.genSaltSync(10);
@@ -32,7 +32,9 @@ const createUserService = async (user) => {
     });
 
     return {
-      user_created_id: user_created,
+      id: user_created[0],
+      user_email: user.user_email,
+      full_name: user.full_name,
     };
   } catch (error) {
     handleServiceError('CREATE', 'USER', error, {

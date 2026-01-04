@@ -1,10 +1,11 @@
 import { knex } from '#common/handlers/index.js';
 
-const getUsersByIdRepositories = async ({ user_id } = {}) => {
+const getUserByEmailRepositories = async ({ user_email } = {}) => {
   const users = await knex('users')
     .select('id', 'user_email', 'full_name')
-    .where({ id: user_id });
+    .where({ user_email });
+
   return { users };
 };
 
-export { getUsersByIdRepositories };
+export { getUserByEmailRepositories };

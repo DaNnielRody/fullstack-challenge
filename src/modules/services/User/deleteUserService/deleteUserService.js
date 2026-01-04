@@ -2,7 +2,7 @@ import {
   getUserRepositories,
   deleteUserRepositories,
 } from '#repositories/index.js';
-import { logDelete } from '#common/services/logger/logger.js';
+import { logDelete, logError } from '#common/services/logger/logger.js';
 import {
   UserNotFoundError,
   UserValidationError,
@@ -11,7 +11,7 @@ import {
 
 const deleteUserService = async ({ user_id }) => {
   try {
-    if (Number.isInteger(user_id) && user_id > 0) {
+    if (!Number.isInteger(user_id) || user_id <= 0) {
       const error = new UserValidationError(
         'Invalid user id: must be a positive integer',
         { user_id }
@@ -44,8 +44,10 @@ const deleteUserService = async ({ user_id }) => {
       full_name: user_to_delete.full_name,
     });
 
+    const { user_password, ...userWithoutPassword } = user_to_delete;
+
     return {
-      deletedUser: user_to_delete,
+      deletedUser: userWithoutPassword,
     };
   } catch (error) {
     handleServiceError('DELETE', 'USER', error, { user_id });

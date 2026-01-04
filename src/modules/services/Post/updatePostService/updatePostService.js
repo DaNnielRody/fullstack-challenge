@@ -2,7 +2,7 @@ import {
   getPostByPostIdRepositories,
   updatePostRepositories,
 } from '#repositories/index.js';
-import { logUpdate } from '#common/services/logger/logger.js';
+import { logUpdate, logError } from '#common/services/logger/logger.js';
 import {
   PostNotFoundError,
   PostValidationError,
@@ -11,7 +11,7 @@ import {
 
 const updatePostService = async ({ id, author_id, post_text }) => {
   try {
-    if (Number.isInteger(id) && id > 0) {
+    if (!Number.isInteger(id) || id <= 0) {
       const error = new PostValidationError(
         'Invalid post id: must be a positive integer',
         { post_id: id }
@@ -20,7 +20,7 @@ const updatePostService = async ({ id, author_id, post_text }) => {
       throw error;
     }
 
-    if (Number.isInteger(author_id) && author_id > 0) {
+    if (!Number.isInteger(author_id) || author_id <= 0) {
       const error = new PostValidationError(
         'Invalid author_id: must be a positive integer',
         { author_id }
@@ -53,11 +53,9 @@ const updatePostService = async ({ id, author_id, post_text }) => {
     });
 
     return {
-      updatedpost: {
-        id,
-        author_id,
-        post_text,
-      },
+      id,
+      author_id,
+      post_text,
     };
   } catch (error) {
     handleServiceError('UPDATE', 'POST', error, {

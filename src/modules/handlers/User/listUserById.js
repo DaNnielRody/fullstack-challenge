@@ -8,7 +8,7 @@ const listUserByIdHandler = async (req, res, next) => {
   try {
     const id = Number(req.params.id);
 
-    if (Number.isInteger(id) && id > 0) {
+    if (!Number.isInteger(id) || id <= 0) {
       const error = new UserValidationError(
         'Invalid user id: must be a positive integer',
         { user_id: id }
