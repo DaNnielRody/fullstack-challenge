@@ -3,21 +3,23 @@ import { httpErrorHandler } from '#common/handlers/index.js';
 import { patchPostService } from '#services/index.js';
 import { PostValidationError } from '#common/errors/index.js';
 import { logError } from '#common/services/logger/logger.js';
+import {
+  validateStringAndThrow,
+  validatePositiveIntegerAndThrow,
+} from '#common/validations/index.js';
 
 const patchPostHandler = async (req, res, next) => {
   try {
-    const post_id = Number(req.params.id);
-    const { author_id, post_text } = req.body;
-    const author_id_num = Number(author_id);
+    const post_id = validatePositiveIntegerAndThrow(
+      req.params.id,
+      'post id',
+      PostValidationError,
+      logError,
+      'PATCH',
+      'POST'
+    );
 
-    if (!Number.isInteger(post_id) || post_id <= 0) {
-      const error = new PostValidationError(
-        'Invalid post id: must be a positive integer',
-        { post_id }
-      );
-      logError('PATCH', 'POST', error, { post_id });
-      throw error;
-    }
+    const { author_id, post_text } = req.body;
 
     if (!author_id && !post_text) {
       const error = new PostValidationError(
@@ -26,6 +28,31 @@ const patchPostHandler = async (req, res, next) => {
       );
       logError('PATCH', 'POST', error, { post_id });
       throw error;
+    }
+
+    let author_id_num = undefined;
+    if (author_id !== undefined) {
+      author_id_num = validatePositiveIntegerAndThrow(
+        author_id,
+        'author_id',
+        PostValidationError,
+        logError,
+        'PATCH',
+        'POST',
+        { post_id }
+      );
+    }
+
+    if (post_text !== undefined) {
+      validateStringAndThrow(
+        post_text,
+        'post_text',
+        PostValidationError,
+        logError,
+        'PATCH',
+        'POST',
+        { post_id, author_id: author_id_num }
+      );
     }
 
     const updated_post = await patchPostService({
