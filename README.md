@@ -14,7 +14,7 @@ Para a resolução dessa API é desejável que o desenvolvedor conheça previame
 
 ## Aplicação e Intuito
 
-A aplicação consiste em alguns *Endpoints* de CRUD(*Create, Read, Update and Delete*), que tem como as suas entidades:
+A aplicação consiste em alguns _Endpoints_ de CRUD(_Create, Read, Update and Delete_), que tem como as suas entidades:
 
 - Usuários
 - Postagens
@@ -26,7 +26,7 @@ Apesar de ser uma simples aplicação acaba por ter diversos problemas que encon
 Para rodar a aplicação é necessário executar somente o comando:
 
 ```docker
-docker compose up --build
+docker compose --profile dev up --build
 ```
 
 Após essa execução a aplicação deverá estar sendo executada no endereço:
@@ -67,7 +67,8 @@ test/3
 
 A partir dessa branch com a resolução é pedido que se crie um pull request para a branch principal.
 E que comente na descrição:
-1. a causa do problema, 
+
+1. a causa do problema,
 2. o porquê a alteração foi feita daquela maneira
 3. como ela soluciona o problema encontrado.
 
