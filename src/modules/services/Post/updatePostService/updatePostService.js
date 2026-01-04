@@ -9,14 +9,14 @@ import {
   handleServiceError,
 } from '#common/errors/index.js';
 
-const updatePostService = async ({ id, author_id, post_text }) => {
+const updatePostService = async ({ post_id, author_id, post_text }) => {
   try {
-    if (!Number.isInteger(id) || id <= 0) {
+    if (!Number.isInteger(post_id) || post_id <= 0) {
       const error = new PostValidationError(
         'Invalid post id: must be a positive integer',
-        { post_id: id }
+        { post_id }
       );
-      logError('UPDATE', 'POST', error, { post_id: id });
+      logError('UPDATE', 'POST', error, { post_id });
       throw error;
     }
 
@@ -25,41 +25,41 @@ const updatePostService = async ({ id, author_id, post_text }) => {
         'Invalid author_id: must be a positive integer',
         { author_id }
       );
-      logError('UPDATE', 'POST', error, { post_id: id, author_id });
+      logError('UPDATE', 'POST', error, { post_id, author_id });
       throw error;
     }
 
     const { posts = [] } = await getPostByPostIdRepositories({
-      post_id: id,
+      post_id,
     });
 
     const has_post = Array.isArray(posts) && posts.length === 1;
 
     if (!has_post) {
-      const error = new PostNotFoundError(id);
-      logError('UPDATE', 'POST', error, { post_id: id });
+      const error = new PostNotFoundError(post_id);
+      logError('UPDATE', 'POST', error, { post_id });
       throw error;
     }
 
     await updatePostRepositories({
-      id,
+      post_id,
       author_id,
       post_text,
     });
 
     logUpdate('POST', {
-      post_id: id,
+      post_id,
       author_id,
     });
 
     return {
-      id,
+      post_id,
       author_id,
       post_text,
     };
   } catch (error) {
     handleServiceError('UPDATE', 'POST', error, {
-      post_id: id,
+      post_id,
       author_id,
     });
   }

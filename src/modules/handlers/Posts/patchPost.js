@@ -8,6 +8,7 @@ const patchPostHandler = async (req, res, next) => {
   try {
     const post_id = Number(req.params.id);
     const { author_id, post_text } = req.body;
+    const author_id_num = Number(author_id);
 
     if (!Number.isInteger(post_id) || post_id <= 0) {
       const error = new PostValidationError(
@@ -28,8 +29,8 @@ const patchPostHandler = async (req, res, next) => {
     }
 
     const updated_post = await patchPostService({
-      id: post_id,
-      author_id: author_id ? Number(author_id) : undefined,
+      post_id,
+      author_id: author_id_num,
       post_text,
     });
 

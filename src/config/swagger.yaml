@@ -32,7 +32,7 @@ definitions:
     additionalProperties: false
     type: 'object'
     properties:
-      id:
+      user_id:
         type: 'integer'
       full_name:
         type: 'string'
@@ -45,7 +45,7 @@ definitions:
       - 'author_id'
       - 'post_text'
     properties:
-      id:
+      post_id:
         type: 'integer'
       author_id:
         type: 'integer'

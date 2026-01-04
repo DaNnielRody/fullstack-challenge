@@ -28,7 +28,7 @@ const patchUserHandler = async (req, res, next) => {
     }
 
     const updated_user = await patchUserService({
-      id: user_id,
+      user_id,
       user_email,
       user_password,
       full_name,

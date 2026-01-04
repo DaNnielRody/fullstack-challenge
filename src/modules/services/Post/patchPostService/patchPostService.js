@@ -9,26 +9,26 @@ import {
   handleServiceError,
 } from '#common/errors/index.js';
 
-const patchPostService = async ({ id, author_id, post_text }) => {
+const patchPostService = async ({ post_id, author_id, post_text }) => {
   try {
-    if (!Number.isInteger(id) || id <= 0) {
+    if (!Number.isInteger(post_id) || post_id <= 0) {
       const error = new PostValidationError(
         'Invalid post id: must be a positive integer',
-        { post_id: id }
+        { post_id }
       );
-      logError('PATCH', 'POST', error, { post_id: id });
+      logError('PATCH', 'POST', error, { post_id });
       throw error;
     }
 
     const { posts = [] } = await getPostByPostIdRepositories({
-      post_id: id,
+      post_id,
     });
 
     const has_post = Array.isArray(posts) && posts.length === 1;
 
     if (!has_post) {
-      const error = new PostNotFoundError(id);
-      logError('PATCH', 'POST', error, { post_id: id });
+      const error = new PostNotFoundError(post_id);
+      logError('PATCH', 'POST', error, { post_id });
       throw error;
     }
 
@@ -37,36 +37,35 @@ const patchPostService = async ({ id, author_id, post_text }) => {
         'Invalid author_id: must be a positive integer',
         { author_id }
       );
-      logError('PATCH', 'POST', error, { post_id: id, author_id });
+      logError('PATCH', 'POST', error, { post_id, author_id });
       throw error;
     }
 
     await updatePostRepositories({
-      id,
+      post_id,
       author_id,
       post_text,
     });
 
-    // Buscar dados atualizados
     const { posts: updatedPosts = [] } = await getPostByPostIdRepositories({
-      post_id: id,
+      post_id,
     });
     const updatedPost = updatedPosts[0];
 
     logUpdate('POST', {
-      post_id: id,
+      post_id,
       author_id: updatedPost.author_id,
       partial_update: true,
     });
 
     return {
-      id: updatedPost.id,
+      post_id: updatedPost.post_id,
       author_id: updatedPost.author_id,
       post_text: updatedPost.post_text,
     };
   } catch (error) {
     handleServiceError('PATCH', 'POST', error, {
-      post_id: id,
+      post_id,
       author_id,
     });
   }

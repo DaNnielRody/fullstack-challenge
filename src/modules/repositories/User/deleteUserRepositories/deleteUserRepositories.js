@@ -1,29 +1,24 @@
 import {
-    getTransaction,
-    commitTransaction,
-    rollbackTransaction
+  getTransaction,
+  commitTransaction,
+  rollbackTransaction,
 } from '#common/handlers/index.js';
 
-const deleteUserRepositories = async ({
-    user_id
-}) => {
-    const { transaction } = await getTransaction();
+const deleteUserRepositories = async ({ user_id }) => {
+  const { transaction } = await getTransaction();
 
-    try {
-        const rowsAffected = await transaction('users').where({id: user_id}).del()
+  try {
+    const rowsAffected = await transaction('users').where({ user_id }).del();
 
-        await commitTransaction({transaction})
+    await commitTransaction({ transaction });
 
-        return {
-            rowsAffected
-        }
-        
-    } catch (err) {
-        await rollbackTransaction({transaction})
-        throw err
-    }
-}
-
-export {
-    deleteUserRepositories
+    return {
+      rowsAffected,
+    };
+  } catch (err) {
+    await rollbackTransaction({ transaction });
+    throw err;
+  }
 };
+
+export { deleteUserRepositories };

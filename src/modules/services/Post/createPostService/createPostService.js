@@ -63,7 +63,7 @@ const createPostService = async (post) => {
     });
 
     return {
-      id: post_created[0],
+      post_id: post_created[0],
       author_id,
       post_text,
     };

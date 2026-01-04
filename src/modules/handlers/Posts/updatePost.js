@@ -8,7 +8,7 @@ const updatePostHandler = async (req, res, next) => {
   try {
     const post_id = Number(req.params.id);
     const { author_id, post_text } = req.body;
-    const author_id_number = Number(author_id);
+    const author_id_num = Number(author_id);
 
     if (!Number.isInteger(post_id) || post_id <= 0) {
       const error = new PostValidationError(
@@ -19,14 +19,14 @@ const updatePostHandler = async (req, res, next) => {
       throw error;
     }
 
-    if (!Number.isInteger(author_id_number) || author_id_number <= 0) {
+    if (!Number.isInteger(author_id_num) || author_id_num <= 0) {
       const error = new PostValidationError(
         'Invalid author_id: must be a positive integer',
-        { author_id: author_id_number }
+        { author_id: author_id_num }
       );
       logError('UPDATE', 'POST', error, {
         post_id,
-        author_id: author_id_number,
+        author_id: author_id_num,
       });
       throw error;
     }
@@ -38,14 +38,14 @@ const updatePostHandler = async (req, res, next) => {
       );
       logError('UPDATE', 'POST', error, {
         post_id,
-        author_id: author_id_number,
+        author_id: author_id_num,
       });
       throw error;
     }
 
     const updated_post = await updatePostService({
-      id: post_id,
-      author_id: author_id_number,
+      post_id,
+      author_id: author_id_num,
       post_text,
     });
 

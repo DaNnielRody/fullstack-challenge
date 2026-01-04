@@ -35,11 +35,11 @@ const deleteUserService = async ({ user_id }) => {
     const [user_to_delete] = users;
 
     await deleteUserRepositories({
-      user_id: user_to_delete.id,
+      user_id: user_to_delete.user_id,
     });
 
     logDelete('USER', {
-      user_id: user_to_delete.id,
+      user_id: user_to_delete.user_id,
       user_email: user_to_delete.user_email,
       full_name: user_to_delete.full_name,
     });

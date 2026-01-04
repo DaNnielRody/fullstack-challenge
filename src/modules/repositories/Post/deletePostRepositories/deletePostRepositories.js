@@ -10,7 +10,7 @@ const deletePostRepositories = async (
     const { transaction } = await getTransaction();
 
     try {
-        const deleted = await transaction('posts').where({ id: post_id }).del()
+        const deleted = await transaction('posts').where({ post_id }).del()
 
         await commitTransaction({transaction})
 

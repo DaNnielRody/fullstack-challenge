@@ -49,7 +49,7 @@ const updateUserHandler = async (req, res, next) => {
     }
 
     const updated_user = await updateUserService({
-      id: user_id,
+      user_id,
       user_email,
       user_password,
       full_name,

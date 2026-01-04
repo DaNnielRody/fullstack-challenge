@@ -6,7 +6,9 @@ const getPostByUserIdRepositories = async ({
     user_id
 } = {}) => {
 
-    const posts = await knex('posts').where({author_id: user_id})
+    const posts = await knex('posts')
+        .select('post_id', 'author_id', 'post_text')
+        .where({author_id: user_id})
 
     return {
         posts
