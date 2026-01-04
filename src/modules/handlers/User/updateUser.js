@@ -3,50 +3,71 @@ import { httpErrorHandler } from '#common/handlers/index.js';
 import { updateUserService } from '#services/index.js';
 import { UserValidationError } from '#common/errors/index.js';
 import { logError } from '#common/services/logger/logger.js';
+import {
+  validateEmail,
+  validatePassword,
+  validatePositiveIntegerAndThrow,
+  validateStringAndThrow,
+} from '#common/validations/index.js';
 
 const updateUserHandler = async (req, res, next) => {
   try {
-    const user_id = Number(req.params.id);
+    const user_id = validatePositiveIntegerAndThrow(
+      req.params.id,
+      'user id',
+      UserValidationError,
+      logError,
+      'UPDATE',
+      'USER'
+    );
+
     const { user_email, user_password, full_name } = req.body;
 
-    if (!Number.isInteger(user_id) || user_id <= 0) {
-      const error = new UserValidationError(
-        'Invalid user id: must be a positive integer',
-        { user_id }
-      );
-      logError('UPDATE', 'USER', error, { user_id });
-      throw error;
-    }
+    validateStringAndThrow(
+      user_email,
+      'user_email',
+      UserValidationError,
+      logError,
+      'UPDATE',
+      'USER',
+      { user_id }
+    );
 
-    if (typeof user_email !== 'string' || user_email.trim().length === 0) {
-      const error = new UserValidationError(
-        'Invalid user_email: must be a non-empty string',
-        { user_email }
-      );
+    const emailValidation = validateEmail(user_email);
+    if (!emailValidation.valid) {
+      const error = new UserValidationError(emailValidation.error, {
+        user_email,
+      });
       logError('UPDATE', 'USER', error, { user_id, user_email });
       throw error;
     }
 
-    if (
-      typeof user_password !== 'string' ||
-      user_password.trim().length === 0
-    ) {
-      const error = new UserValidationError(
-        'Invalid user_password: must be a non-empty string',
-        {}
-      );
+    validateStringAndThrow(
+      user_password,
+      'user_password',
+      UserValidationError,
+      logError,
+      'UPDATE',
+      'USER',
+      { user_id, user_email }
+    );
+
+    const passwordValidation = validatePassword(user_password);
+    if (!passwordValidation.valid) {
+      const error = new UserValidationError(passwordValidation.error, {});
       logError('UPDATE', 'USER', error, { user_id, user_email });
       throw error;
     }
 
-    if (typeof full_name !== 'string' || full_name.trim().length === 0) {
-      const error = new UserValidationError(
-        'Invalid full_name: must be a non-empty string',
-        { full_name }
-      );
-      logError('UPDATE', 'USER', error, { user_id, user_email });
-      throw error;
-    }
+    validateStringAndThrow(
+      full_name,
+      'full_name',
+      UserValidationError,
+      logError,
+      'UPDATE',
+      'USER',
+      { user_id, user_email }
+    );
 
     const updated_user = await updateUserService({
       user_id,

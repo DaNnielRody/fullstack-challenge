@@ -15,25 +15,17 @@ const httpErrorHandler = ({ req, res, error }) => {
 
   if (is_domain_error) {
     response = {
-      error_id,
       code: error.code || 'INTERNAL_ERROR',
       message: error.message,
     };
-
-    if (error.details) {
-      response.details = error.details;
-    }
   } else if (is_internal) {
     response = {
-      error_id,
       code: 'INTERNAL_ERROR',
     };
   } else {
     response = {
-      error_id,
       code: 'INTERNAL_ERROR',
       message: error.message,
-      details: error.details || error,
     };
   }
 
@@ -67,6 +59,7 @@ const httpErrorHandler = ({ req, res, error }) => {
       ...(error.author_id && { author_id: error.author_id }),
       ...(error.entityId && { entity_id: error.entityId }),
       ...(error.referenceId && { reference_id: error.referenceId }),
+      ...(error.details && { details: error.details }),
     },
   };
 

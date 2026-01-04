@@ -3,20 +3,25 @@ import { httpErrorHandler } from '#common/handlers/index.js';
 import { patchUserService } from '#services/index.js';
 import { UserValidationError } from '#common/errors/index.js';
 import { logError } from '#common/services/logger/logger.js';
+import {
+  validateEmail,
+  validatePassword,
+  validatePositiveIntegerAndThrow,
+  validateStringAndThrow,
+} from '#common/validations/index.js';
 
 const patchUserHandler = async (req, res, next) => {
   try {
-    const user_id = Number(req.params.id);
-    const { user_email, user_password, full_name } = req.body;
+    const user_id = validatePositiveIntegerAndThrow(
+      req.params.id,
+      'user id',
+      UserValidationError,
+      logError,
+      'PATCH',
+      'USER'
+    );
 
-    if (!Number.isInteger(user_id) || user_id <= 0) {
-      const error = new UserValidationError(
-        'Invalid user id: must be a positive integer',
-        { user_id }
-      );
-      logError('PATCH', 'USER', error, { user_id });
-      throw error;
-    }
+    const { user_email, user_password, full_name } = req.body;
 
     if (!user_email && !user_password && !full_name) {
       const error = new UserValidationError(
@@ -25,6 +30,46 @@ const patchUserHandler = async (req, res, next) => {
       );
       logError('PATCH', 'USER', error, { user_id });
       throw error;
+    }
+
+    if (user_email !== undefined) {
+      validateStringAndThrow(
+        user_email,
+        'user_email',
+        UserValidationError,
+        logError,
+        'PATCH',
+        'USER',
+        { user_id }
+      );
+
+      const emailValidation = validateEmail(user_email);
+      if (!emailValidation.valid) {
+        const error = new UserValidationError(emailValidation.error, {
+          user_email,
+        });
+        logError('PATCH', 'USER', error, { user_id, user_email });
+        throw error;
+      }
+    }
+
+    if (user_password !== undefined) {
+      validateStringAndThrow(
+        user_password,
+        'user_password',
+        UserValidationError,
+        logError,
+        'PATCH',
+        'USER',
+        { user_id }
+      );
+
+      const passwordValidation = validatePassword(user_password);
+      if (!passwordValidation.valid) {
+        const error = new UserValidationError(passwordValidation.error, {});
+        logError('PATCH', 'USER', error, { user_id });
+        throw error;
+      }
     }
 
     const updated_user = await patchUserService({
