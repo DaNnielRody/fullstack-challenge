@@ -13,12 +13,21 @@ const updateUserRepositories = async ({
     const { transaction } = await getTransaction();
 
     try {
+        const updateData = {};
+        
+        if (user_email !== undefined) {
+            updateData.user_email = user_email;
+        }
+        if (user_password !== undefined) {
+            updateData.user_password = user_password;
+        }
+        if (full_name !== undefined) {
+            updateData.full_name = full_name;
+        }
 
-        const rowsAffected = await transaction('users').where({ id }).update({
-            user_email,
-            user_password,
-            full_name
-        });
+        const rowsAffected = await transaction('users')
+            .where({ id })
+            .update(updateData);
 
         await commitTransaction({ transaction })
 

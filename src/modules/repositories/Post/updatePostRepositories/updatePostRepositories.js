@@ -1,34 +1,35 @@
 import {
-    getTransaction,
-    commitTransaction,
-    rollbackTransaction
+  getTransaction,
+  commitTransaction,
+  rollbackTransaction,
 } from '#common/handlers/index.js';
 
-const updatePostRepositories = async ({
-    id,
-    author_id,
-    post_text
-}) => {
-    const { transaction } = await getTransaction();
+const updatePostRepositories = async ({ id, author_id, post_text }) => {
+  const { transaction } = await getTransaction();
 
-    try {
+  try {
+    const updateData = {};
 
-        const rowsAffected = await transaction('posts').where({ id }).update({
-            author_id,
-            post_text
-        })
-
-        await commitTransaction({ transaction })
-
-        return {
-            rowsAffected
-        };
-    } catch (err) {
-        await rollbackTransaction({ transaction })
-        throw err
+    if (author_id !== undefined) {
+      updateData.author_id = author_id;
     }
-}
+    if (post_text !== undefined) {
+      updateData.post_text = post_text;
+    }
 
-export {
-    updatePostRepositories
+    const rowsAffected = await transaction('posts')
+      .where({ id })
+      .update(updateData);
+
+    await commitTransaction({ transaction });
+
+    return {
+      rowsAffected,
+    };
+  } catch (err) {
+    await rollbackTransaction({ transaction });
+    throw err;
+  }
 };
+
+export { updatePostRepositories };
