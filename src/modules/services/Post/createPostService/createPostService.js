@@ -1,6 +1,6 @@
 import { getUserByIdService } from '#services/User/getUserByIdService/getUserByIdService.js';
 import { createPostRepositories } from '#repositories/index.js';
-import { logCreate } from '#common/services/logger/logger.js';
+import { logCreate, logError } from '#common/services/logger/logger.js';
 import {
   AuthorNotFoundError,
   PostCreationError,
@@ -11,11 +11,21 @@ import {
 const createPostService = async (post) => {
   try {
     const { author_id } = post;
+    const { post_text } = post;
 
-    if (Number.isInteger(author_id) && author_id > 0) {
+    if (!Number.isInteger(author_id) || author_id <= 0) {
       const error = new PostValidationError(
         'Invalid author_id: must be a positive integer',
         { author_id }
+      );
+      logError('CREATE', 'POST', error, { author_id });
+      throw error;
+    }
+
+    if (typeof post_text !== 'string' || post_text.trim().length === 0) {
+      const error = new PostValidationError(
+        'Invalid post_text: must be a non-empty string',
+        { post_text }
       );
       logError('CREATE', 'POST', error, { author_id });
       throw error;
@@ -49,11 +59,13 @@ const createPostService = async (post) => {
     logCreate('POST', {
       post_id: post_created[0],
       author_id,
-      title: post.title,
+      post_text_preview: post_text.slice(0, 80),
     });
 
     return {
-      post_created_id: post_created,
+      id: post_created[0],
+      author_id,
+      post_text,
     };
   } catch (error) {
     handleServiceError('CREATE', 'POST', error, {

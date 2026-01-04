@@ -1,12 +1,14 @@
 import bcrypt from 'bcryptjs';
 import {
   getUserRepositories,
+  getUserByEmailRepositories,
   updateUserRepositories,
 } from '#repositories/index.js';
 import { logUpdate, logError } from '#common/services/logger/logger.js';
 import {
   UserNotFoundError,
   UserValidationError,
+  UserEmailAlreadyExistsError,
   handleServiceError,
 } from '#common/errors/index.js';
 
@@ -19,7 +21,7 @@ const updateUserService = async ({
   full_name,
 }) => {
   try {
-    if (Number.isInteger(id) && id > 0) {
+    if (!Number.isInteger(id) || id <= 0) {
       const error = new UserValidationError(
         'Invalid user id: must be a positive integer',
         { user_id: id }
@@ -40,7 +42,23 @@ const updateUserService = async ({
       throw error;
     }
 
-    const crypt_password = bcrypt.hashSync(users[0].user_password, salt);
+    const currentUser = users[0];
+
+    if (user_email !== currentUser.user_email) {
+      const { users: existingUsers = [] } = await getUserByEmailRepositories({
+        user_email,
+      });
+
+      if (existingUsers.length > 0) {
+        const error = new UserEmailAlreadyExistsError(user_email);
+        logError('UPDATE', 'USER', error, { user_id: id, user_email });
+        throw error;
+      }
+    }
+
+    const crypt_password = user_password
+      ? bcrypt.hashSync(user_password, salt)
+      : currentUser.user_password;
 
     await updateUserRepositories({
       id,
@@ -56,12 +74,9 @@ const updateUserService = async ({
     });
 
     return {
-      updatedUser: {
-        id,
-        user_email,
-        user_password,
-        full_name,
-      },
+      id,
+      user_email,
+      full_name,
     };
   } catch (error) {
     handleServiceError('UPDATE', 'USER', error, {

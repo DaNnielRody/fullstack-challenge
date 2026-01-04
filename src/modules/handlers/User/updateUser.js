@@ -9,12 +9,42 @@ const updateUserHandler = async (req, res, next) => {
     const id = Number(req.params.id);
     const { user_email, user_password, full_name } = req.body;
 
-    if (Number.isInteger(id) && id > 0) {
+    if (!Number.isInteger(id) || id <= 0) {
       const error = new UserValidationError(
         'Invalid user id: must be a positive integer',
         { user_id: id }
       );
       logError('UPDATE', 'USER', error, { user_id: id });
+      throw error;
+    }
+
+    if (typeof user_email !== 'string' || user_email.trim().length === 0) {
+      const error = new UserValidationError(
+        'Invalid user_email: must be a non-empty string',
+        { user_email }
+      );
+      logError('UPDATE', 'USER', error, { user_id: id, user_email });
+      throw error;
+    }
+
+    if (
+      typeof user_password !== 'string' ||
+      user_password.trim().length === 0
+    ) {
+      const error = new UserValidationError(
+        'Invalid user_password: must be a non-empty string',
+        {}
+      );
+      logError('UPDATE', 'USER', error, { user_id: id, user_email });
+      throw error;
+    }
+
+    if (typeof full_name !== 'string' || full_name.trim().length === 0) {
+      const error = new UserValidationError(
+        'Invalid full_name: must be a non-empty string',
+        { full_name }
+      );
+      logError('UPDATE', 'USER', error, { user_id: id, user_email });
       throw error;
     }
 

@@ -1,5 +1,5 @@
 import { getUsersByIdRepositories } from '#repositories/index.js';
-import { logRead } from '#common/services/logger/logger.js';
+import { logRead, logError } from '#common/services/logger/logger.js';
 import {
   UserValidationError,
   handleServiceError,

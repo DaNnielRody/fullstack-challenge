@@ -1,6 +1,6 @@
 import { getUserByIdService } from '#services/User/getUserByIdService/getUserByIdService.js';
 import { getPostByUserIdRepositories } from '#repositories/index.js';
-import { logList } from '#common/services/logger/logger.js';
+import { logList, logError } from '#common/services/logger/logger.js';
 import {
   AuthorNotFoundError,
   PostValidationError,
@@ -9,7 +9,7 @@ import {
 
 const getPostByUserIdService = async ({ user_id }) => {
   try {
-    if (Number.isInteger(user_id) && user_id > 0) {
+    if (!Number.isInteger(user_id) || user_id <= 0) {
       const error = new PostValidationError(
         'Invalid user_id: must be a positive integer',
         { user_id }

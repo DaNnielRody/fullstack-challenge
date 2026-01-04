@@ -10,7 +10,7 @@ const updatePostHandler = async (req, res, next) => {
     const { author_id, post_text } = req.body;
     const authorId = Number(author_id);
 
-    if (Number.isInteger(id) && id > 0) {
+    if (!Number.isInteger(id) || id <= 0) {
       const error = new PostValidationError(
         'Invalid post id: must be a positive integer',
         { post_id: id }
@@ -19,10 +19,19 @@ const updatePostHandler = async (req, res, next) => {
       throw error;
     }
 
-    if (Number.isInteger(authorId) && authorId > 0) {
+    if (!Number.isInteger(authorId) || authorId <= 0) {
       const error = new PostValidationError(
         'Invalid author_id: must be a positive integer',
         { author_id: authorId }
+      );
+      logError('UPDATE', 'POST', error, { post_id: id, author_id: authorId });
+      throw error;
+    }
+
+    if (typeof post_text !== 'string' || post_text.trim().length === 0) {
+      const error = new PostValidationError(
+        'Invalid post_text: must be a non-empty string',
+        { post_text }
       );
       logError('UPDATE', 'POST', error, { post_id: id, author_id: authorId });
       throw error;

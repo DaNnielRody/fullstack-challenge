@@ -9,7 +9,16 @@ const createPostHandler = async (req, res, next) => {
     const { post_text, author_id } = req.body;
     const authorId = Number(author_id);
 
-    if (Number.isInteger(authorId) && authorId > 0) {
+    if (typeof post_text !== 'string' || post_text.trim().length === 0) {
+      const error = new PostValidationError(
+        'Invalid post_text: must be a non-empty string',
+        { post_text }
+      );
+      logError('CREATE', 'POST', error, { author_id: authorId });
+      throw error;
+    }
+
+    if (!Number.isInteger(authorId) || authorId <= 0) {
       const error = new PostValidationError(
         'Invalid author_id: must be a positive integer',
         { author_id: authorId }
