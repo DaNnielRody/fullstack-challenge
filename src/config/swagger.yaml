@@ -1,64 +1,88 @@
-swagger: "2.0"
+swagger: '2.0'
 info:
-  description: "Controle Simples de Postagens com Usuários"
-  version: "1.0.0"
-  title: "posts_control"
-basePath: "/api/v1"
+  description: 'Controle Simples de Postagens com Usuários'
+  version: '1.0.0'
+  title: 'posts_control'
+basePath: '/api/v1'
 consumes:
-  - "application/json"
+  - 'application/json'
 produces:
-  - "application/json"
+  - 'application/json'
 tags:
-  - name: "Users"
-    description: "User CRUD"
-  - name: "Posts"
-    description: "Post CRUD"
+  - name: 'Users'
+    description: 'User CRUD'
+  - name: 'Posts'
+    description: 'Post CRUD'
 definitions:
   user:
     additionalProperties: false
-    type: "object"
-    required:
-      - "full_name"
-      - "user_email"
-      - "user_password"
-    properties:
-      full_name:
-        type: "string"
-      user_email:
-        type: "string"
-      user_password:
-        type: "string"
-  post:
-    additionalProperties: false
-    type: "object"
-    required:
-      - "author_id"
-      - "post_text"
+    type: 'object'
     properties:
       id:
-        type: "integer"
+        type: 'integer'
+      full_name:
+        type: 'string'
+      user_email:
+        type: 'string'
+      user_password:
+        type: 'string'
+  post:
+    additionalProperties: false
+    type: 'object'
+    required:
+      - 'author_id'
+      - 'post_text'
+    properties:
+      id:
+        type: 'integer'
       author_id:
-        type: "integer"
+        type: 'integer'
       post_text:
-        type: "string"
+        type: 'string'
+  users_response:
+    additionalProperties: false
+    type: 'object'
+    properties:
+      users:
+        type: array
+        items:
+          $ref: '#/definitions/user'
+  deleted_user_response:
+    additionalProperties: false
+    type: 'object'
+    properties:
+      deletedUser:
+        $ref: '#/definitions/user'
+  posts_response:
+    additionalProperties: false
+    type: 'object'
+    properties:
+      posts:
+        type: array
+        items:
+          $ref: '#/definitions/post'
+  deleted_post_response:
+    additionalProperties: false
+    type: 'object'
+    properties:
+      deletedPost:
+        $ref: '#/definitions/post'
 paths:
   /user:
     get:
       tags:
-        - "Users"
+        - 'Users'
       x-swagger-router-controller: app
       summary: list users
       operationId: listUserHandler
       responses:
         200:
-          description: "success"
+          description: 'success'
           schema:
-            type: array
-            items:
-              $ref: "#/definitions/user"
+            $ref: '#/definitions/users_response'
     post:
       tags:
-        - "Users"
+        - 'Users'
       x-swagger-router-controller: app
       summary: create user
       operationId: createUserHandler
@@ -67,16 +91,28 @@ paths:
           name: user
           description: create user
           schema:
-            $ref: "#/definitions/user"
+            type: 'object'
+            additionalProperties: false
+            required:
+              - 'full_name'
+              - 'user_email'
+              - 'user_password'
+            properties:
+              full_name:
+                type: 'string'
+              user_email:
+                type: 'string'
+              user_password:
+                type: 'string'
       responses:
-        200:
-          description: "success"
+        201:
+          description: 'success'
           schema:
-            $ref: "#/definitions/user"
+            $ref: '#/definitions/user'
   /user/{id}:
     get:
       tags:
-        - "Users"
+        - 'Users'
       x-swagger-router-controller: app
       summary: get user by id
       operationId: listUserByIdHandler
@@ -88,14 +124,14 @@ paths:
           description: User ID
       responses:
         200:
-          description: "success"
+          description: 'success'
           schema:
-            $ref: "#/definitions/user"
+            $ref: '#/definitions/users_response'
     put:
       tags:
-        - "Users"
+        - 'Users'
       x-swagger-router-controller: app
-      summary: update user
+      summary: update user (full update)
       operationId: updateUserHandler
       parameters:
         - name: id
@@ -108,26 +144,56 @@ paths:
           description: update user
           schema:
             additionalProperties: false
-            type: "object"
+            type: 'object'
             required:
-              - "full_name"
-              - "user_email"
-              - "user_password"
+              - 'full_name'
+              - 'user_email'
+              - 'user_password'
             properties:
               full_name:
-                type: "string"
+                type: 'string'
               user_email:
-                type: "string"
+                type: 'string'
               user_password:
-                type: "string"
+                type: 'string'
       responses:
         200:
-          description: "success"
+          description: 'success'
           schema:
-            $ref: "#/definitions/user"
+            $ref: '#/definitions/user'
+    patch:
+      tags:
+        - 'Users'
+      x-swagger-router-controller: app
+      summary: partial update user
+      operationId: patchUserHandler
+      parameters:
+        - name: id
+          in: path
+          type: integer
+          required: true
+          description: User ID
+        - in: body
+          name: user
+          description: partial update user
+          schema:
+            additionalProperties: false
+            type: 'object'
+            properties:
+              full_name:
+                type: 'string'
+              user_email:
+                type: 'string'
+              user_password:
+                type: 'string'
+      responses:
+        200:
+          description: 'success'
+          schema:
+            $ref: '#/definitions/user'
     delete:
       tags:
-        - "Users"
+        - 'Users'
       x-swagger-router-controller: app
       summary: delete user
       operationId: deleteUserHandler
@@ -139,31 +205,30 @@ paths:
           description: User ID
       responses:
         200:
-          description: "success"
+          description: 'success'
           schema:
-            $ref: "#/definitions/user"
+            $ref: '#/definitions/deleted_user_response'
   /post:
     get:
       tags:
-        - "Posts"
+        - 'Posts'
       x-swagger-router-controller: app
-      summary: list post
+      summary: list posts
       operationId: listPostHandler
       parameters:
         - name: user_id
           in: query
-          type: string
+          type: integer
           required: false
+          description: Filter posts by user ID (optional - if not provided, returns all posts)
       responses:
         200:
-          description: "success"
+          description: 'success'
           schema:
-            type: array
-            items:
-              $ref: "#/definitions/post"
+            $ref: '#/definitions/posts_response'
     post:
       tags:
-        - "Posts"
+        - 'Posts'
       x-swagger-router-controller: app
       summary: create post
       operationId: createPostHandler
@@ -183,16 +248,16 @@ paths:
               author_id:
                 type: integer
       responses:
-        200:
-          description: "success"
+        201:
+          description: 'success'
           schema:
-            $ref: "#/definitions/post"
+            $ref: '#/definitions/post'
   /post/{id}:
     put:
       tags:
-        - "Posts"
+        - 'Posts'
       x-swagger-router-controller: app
-      summary: update post
+      summary: update post (full update)
       operationId: updatePostHandler
       parameters:
         - name: id
@@ -205,23 +270,51 @@ paths:
           description: update post
           schema:
             additionalProperties: false
-            type: "object"
+            type: 'object'
             required:
-              - "author_id"
-              - "post_text"
+              - 'author_id'
+              - 'post_text'
             properties:
               author_id:
-                type: "integer"
+                type: 'integer'
               post_text:
-                type: "string"
+                type: 'string'
       responses:
         200:
-          description: "success"
+          description: 'success'
           schema:
-            $ref: "#/definitions/post"
+            $ref: '#/definitions/post'
+    patch:
+      tags:
+        - 'Posts'
+      x-swagger-router-controller: app
+      summary: partial update post
+      operationId: patchPostHandler
+      parameters:
+        - name: id
+          in: path
+          type: integer
+          required: true
+          description: Post ID
+        - in: body
+          name: post
+          description: partial update post
+          schema:
+            additionalProperties: false
+            type: 'object'
+            properties:
+              author_id:
+                type: 'integer'
+              post_text:
+                type: 'string'
+      responses:
+        200:
+          description: 'success'
+          schema:
+            $ref: '#/definitions/post'
     delete:
       tags:
-        - "Posts"
+        - 'Posts'
       x-swagger-router-controller: app
       summary: delete post
       operationId: deletePostHandler
@@ -232,6 +325,6 @@ paths:
           required: true
       responses:
         200:
-          description: "success"
+          description: 'success'
           schema:
-            $ref: "#/definitions/post"
+            $ref: '#/definitions/deleted_post_response'
