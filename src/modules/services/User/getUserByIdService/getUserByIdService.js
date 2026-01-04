@@ -1,40 +1,33 @@
-import { getUsersByIdRepositories } from "#repositories/index.js";
+import { getUsersByIdRepositories } from '#repositories/index.js';
 import { logRead, logError } from '#common/services/logger/logger.js';
+import { UserValidationError } from '#common/errors/index.js';
 
-const getUserByIdService = async ({
-    user_id
-}) => {
-    try {
-        const has_user_id = !!user_id;
+const getUserByIdService = async ({ user_id }) => {
+  try {
+    const has_user_id = Number.isInteger(user_id) && user_id > 0;
 
-        if (!has_user_id) {
-            logError('READ', 'USER', new Error('Missing user_id'), { user_id })
-            return {
-                user: false,
-                has_single_user: false
-            }
-        }
-
-        const {
-            users = []
-        } = await getUsersByIdRepositories({
-            user_id
-        })
-
-        const has_single_user = Array.isArray(users) && users.length > 0;
-
-        logRead('USER', { user_id, found: has_single_user })
-
-        return {
-            user: users,
-            has_single_user
-        };
-    } catch (error) {
-        logError('READ', 'USER', error, { user_id })
-        throw error
+    if (has_user_id === false) {
+      const error = new UserValidationError(
+        'Invalid user_id: must be a positive integer',
+        { user_id }
+      );
+      logError('READ', 'USER', error, { user_id });
+      throw error;
     }
-}
 
-export {
-    getUserByIdService
+    const { users = [] } = await getUsersByIdRepositories({
+      user_id,
+    });
+
+    logRead('USER', { user_id, found: users.length > 0 });
+
+    return {
+      user: users,
+    };
+  } catch (error) {
+    logError('READ', 'USER', error, { user_id });
+    throw error;
+  }
 };
+
+export { getUserByIdService };
