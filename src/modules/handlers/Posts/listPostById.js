@@ -6,19 +6,19 @@ import { logError } from '#common/services/logger/logger.js';
 
 const listPostByIdHandler = async (req, res, next) => {
   try {
-    const userId = Number(req.query.user_id);
+    const user_id = Number(req.query.user_id);
 
-    if (!Number.isInteger(userId) || userId <= 0) {
+    if (!Number.isInteger(user_id) || user_id <= 0) {
       const error = new PostValidationError(
         'Invalid user_id: must be a positive integer',
-        { user_id: userId }
+        { user_id }
       );
-      logError('LIST', 'POST', error, { user_id: userId });
+      logError('LIST', 'POST', error, { user_id });
       throw error;
     }
 
     const { posts } = await getPostByUserIdService({
-      user_id: userId,
+      user_id,
     });
 
     return res.status(httpStatusCodes.OK).send({ posts });

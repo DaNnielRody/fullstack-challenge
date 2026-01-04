@@ -17,14 +17,26 @@ definitions:
   user:
     additionalProperties: false
     type: 'object'
+    required:
+      - 'full_name'
+      - 'user_email'
+      - 'user_password'
+    properties:
+      full_name:
+        type: 'string'
+      user_email:
+        type: 'string'
+      user_password:
+        type: 'string'
+  user_response:
+    additionalProperties: false
+    type: 'object'
     properties:
       id:
         type: 'integer'
       full_name:
         type: 'string'
       user_email:
-        type: 'string'
-      user_password:
         type: 'string'
   post:
     additionalProperties: false
@@ -46,13 +58,7 @@ definitions:
       users:
         type: array
         items:
-          $ref: '#/definitions/user'
-  deleted_user_response:
-    additionalProperties: false
-    type: 'object'
-    properties:
-      deletedUser:
-        $ref: '#/definitions/user'
+          $ref: '#/definitions/user_response'
   posts_response:
     additionalProperties: false
     type: 'object'
@@ -61,12 +67,6 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/post'
-  deleted_post_response:
-    additionalProperties: false
-    type: 'object'
-    properties:
-      deletedPost:
-        $ref: '#/definitions/post'
 paths:
   /user:
     get:
@@ -77,7 +77,7 @@ paths:
       operationId: listUserHandler
       responses:
         200:
-          description: 'success'
+          description: 'users retrieved'
           schema:
             $ref: '#/definitions/users_response'
     post:
@@ -106,9 +106,9 @@ paths:
                 type: 'string'
       responses:
         201:
-          description: 'success'
+          description: 'user created'
           schema:
-            $ref: '#/definitions/user'
+            $ref: '#/definitions/user_response'
   /user/{id}:
     get:
       tags:
@@ -124,9 +124,9 @@ paths:
           description: User ID
       responses:
         200:
-          description: 'success'
+          description: 'user retrieved'
           schema:
-            $ref: '#/definitions/users_response'
+            $ref: '#/definitions/user_response'
     put:
       tags:
         - 'Users'
@@ -158,9 +158,9 @@ paths:
                 type: 'string'
       responses:
         200:
-          description: 'success'
+          description: 'user updated'
           schema:
-            $ref: '#/definitions/user'
+            $ref: '#/definitions/user_response'
     patch:
       tags:
         - 'Users'
@@ -188,9 +188,9 @@ paths:
                 type: 'string'
       responses:
         200:
-          description: 'success'
+          description: 'user updated'
           schema:
-            $ref: '#/definitions/user'
+            $ref: '#/definitions/user_response'
     delete:
       tags:
         - 'Users'
@@ -204,10 +204,8 @@ paths:
           required: true
           description: User ID
       responses:
-        200:
-          description: 'success'
-          schema:
-            $ref: '#/definitions/deleted_user_response'
+        204:
+          description: 'user deleted'
   /post:
     get:
       tags:
@@ -223,7 +221,7 @@ paths:
           description: Filter posts by user ID (optional - if not provided, returns all posts)
       responses:
         200:
-          description: 'success'
+          description: 'posts retrieved'
           schema:
             $ref: '#/definitions/posts_response'
     post:
@@ -249,7 +247,7 @@ paths:
                 type: integer
       responses:
         201:
-          description: 'success'
+          description: 'post created'
           schema:
             $ref: '#/definitions/post'
   /post/{id}:
@@ -281,7 +279,7 @@ paths:
                 type: 'string'
       responses:
         200:
-          description: 'success'
+          description: 'post updated'
           schema:
             $ref: '#/definitions/post'
     patch:
@@ -309,7 +307,7 @@ paths:
                 type: 'string'
       responses:
         200:
-          description: 'success'
+          description: 'post updated'
           schema:
             $ref: '#/definitions/post'
     delete:
@@ -319,12 +317,11 @@ paths:
       summary: delete post
       operationId: deletePostHandler
       parameters:
-        - name: post_id
-          in: query
+        - name: id
+          in: path
           type: integer
           required: true
+          description: Post ID
       responses:
-        200:
-          description: 'success'
-          schema:
-            $ref: '#/definitions/deleted_post_response'
+        204:
+          description: 'post deleted'

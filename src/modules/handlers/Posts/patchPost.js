@@ -6,15 +6,15 @@ import { logError } from '#common/services/logger/logger.js';
 
 const patchPostHandler = async (req, res, next) => {
   try {
-    const id = Number(req.params.id);
+    const post_id = Number(req.params.id);
     const { author_id, post_text } = req.body;
 
-    if (!Number.isInteger(id) || id <= 0) {
+    if (!Number.isInteger(post_id) || post_id <= 0) {
       const error = new PostValidationError(
         'Invalid post id: must be a positive integer',
-        { post_id: id }
+        { post_id }
       );
-      logError('PATCH', 'POST', error, { post_id: id });
+      logError('PATCH', 'POST', error, { post_id });
       throw error;
     }
 
@@ -23,12 +23,12 @@ const patchPostHandler = async (req, res, next) => {
         'At least one field must be provided for update',
         {}
       );
-      logError('PATCH', 'POST', error, { post_id: id });
+      logError('PATCH', 'POST', error, { post_id });
       throw error;
     }
 
     const updated_post = await patchPostService({
-      id,
+      id: post_id,
       author_id: author_id ? Number(author_id) : undefined,
       post_text,
     });

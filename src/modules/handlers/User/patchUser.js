@@ -6,15 +6,15 @@ import { logError } from '#common/services/logger/logger.js';
 
 const patchUserHandler = async (req, res, next) => {
   try {
-    const id = Number(req.params.id);
+    const user_id = Number(req.params.id);
     const { user_email, user_password, full_name } = req.body;
 
-    if (!Number.isInteger(id) || id <= 0) {
+    if (!Number.isInteger(user_id) || user_id <= 0) {
       const error = new UserValidationError(
         'Invalid user id: must be a positive integer',
-        { user_id: id }
+        { user_id }
       );
-      logError('PATCH', 'USER', error, { user_id: id });
+      logError('PATCH', 'USER', error, { user_id });
       throw error;
     }
 
@@ -23,12 +23,12 @@ const patchUserHandler = async (req, res, next) => {
         'At least one field must be provided for update',
         {}
       );
-      logError('PATCH', 'USER', error, { user_id: id });
+      logError('PATCH', 'USER', error, { user_id });
       throw error;
     }
 
     const updated_user = await patchUserService({
-      id,
+      id: user_id,
       user_email,
       user_password,
       full_name,

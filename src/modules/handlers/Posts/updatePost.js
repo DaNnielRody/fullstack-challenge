@@ -6,25 +6,28 @@ import { logError } from '#common/services/logger/logger.js';
 
 const updatePostHandler = async (req, res, next) => {
   try {
-    const id = Number(req.params.id);
+    const post_id = Number(req.params.id);
     const { author_id, post_text } = req.body;
-    const authorId = Number(author_id);
+    const author_id_number = Number(author_id);
 
-    if (!Number.isInteger(id) || id <= 0) {
+    if (!Number.isInteger(post_id) || post_id <= 0) {
       const error = new PostValidationError(
         'Invalid post id: must be a positive integer',
-        { post_id: id }
+        { post_id }
       );
-      logError('UPDATE', 'POST', error, { post_id: id });
+      logError('UPDATE', 'POST', error, { post_id });
       throw error;
     }
 
-    if (!Number.isInteger(authorId) || authorId <= 0) {
+    if (!Number.isInteger(author_id_number) || author_id_number <= 0) {
       const error = new PostValidationError(
         'Invalid author_id: must be a positive integer',
-        { author_id: authorId }
+        { author_id: author_id_number }
       );
-      logError('UPDATE', 'POST', error, { post_id: id, author_id: authorId });
+      logError('UPDATE', 'POST', error, {
+        post_id,
+        author_id: author_id_number,
+      });
       throw error;
     }
 
@@ -33,13 +36,16 @@ const updatePostHandler = async (req, res, next) => {
         'Invalid post_text: must be a non-empty string',
         { post_text }
       );
-      logError('UPDATE', 'POST', error, { post_id: id, author_id: authorId });
+      logError('UPDATE', 'POST', error, {
+        post_id,
+        author_id: author_id_number,
+      });
       throw error;
     }
 
     const updated_post = await updatePostService({
-      id,
-      author_id: authorId,
+      id: post_id,
+      author_id: author_id_number,
       post_text,
     });
 
