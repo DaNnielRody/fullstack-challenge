@@ -11,6 +11,7 @@
     "#repositories/*": "./src/modules/repositories/*",
     "#common/handlers/*": "./src/modules/common/handlers/*",
     "#common/services/*": "./src/modules/common/services/*",
+    "#common/errors/*": "./src/modules/common/errors/*",
     "#routes/*": "./src/modules/routes/*"
   },
   "dependencies": {
@@ -31,7 +32,8 @@
   },
   "devDependencies": {
     "jest": "^30.0.2",
-    "nodemon": "^3.1.11"
+    "nodemon": "^3.1.11",
+    "prettier": "^3.7.4"
   },
   "scripts": {
     "start": "node ./src/app.js",
