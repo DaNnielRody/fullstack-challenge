@@ -1,5 +1,6 @@
 import { getUsersRepositories } from '#repositories/index.js';
-import { logList, logError } from '#common/services/logger/logger.js';
+import { logList } from '#common/services/logger/logger.js';
+import { handleServiceError } from '#common/errors/index.js';
 
 const getAllUsersService = async () => {
   try {
@@ -11,8 +12,7 @@ const getAllUsersService = async () => {
       users,
     };
   } catch (error) {
-    logError('LIST', 'USER', error);
-    throw error;
+    handleServiceError('LIST', 'USER', error, {});
   }
 };
 

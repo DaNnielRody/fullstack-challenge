@@ -1,10 +1,7 @@
 import bcrypt from 'bcryptjs';
 import { createUserRepositories } from '#repositories/index.js';
-import { logCreate, logError } from '#common/services/logger/logger.js';
-import {
-  UserCreationError,
-  UserEmailAlreadyExistsError,
-} from '#common/errors/index.js';
+import { logCreate } from '#common/services/logger/logger.js';
+import { UserCreationError, handleServiceError } from '#common/errors/index.js';
 
 const salt = bcrypt.genSaltSync(10);
 
@@ -38,21 +35,9 @@ const createUserService = async (user) => {
       user_created_id: user_created,
     };
   } catch (error) {
-    if (
-      error.code === 'ER_DUP_ENTRY' ||
-      error.code === '23505' ||
-      (error.message &&
-        error.message.includes('unique') &&
-        error.message.includes('user_email'))
-    ) {
-      const duplicateError = new UserEmailAlreadyExistsError(user.user_email);
-      logError('CREATE', 'USER', duplicateError, {
-        user_email: user.user_email,
-      });
-      throw duplicateError;
-    }
-    logError('CREATE', 'USER', error, { user_email: user.user_email });
-    throw error;
+    handleServiceError('CREATE', 'USER', error, {
+      user_email: user.user_email,
+    });
   }
 };
 

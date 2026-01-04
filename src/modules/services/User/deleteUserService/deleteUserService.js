@@ -2,10 +2,11 @@ import {
   getUserRepositories,
   deleteUserRepositories,
 } from '#repositories/index.js';
-import { logDelete, logError } from '#common/services/logger/logger.js';
+import { logDelete } from '#common/services/logger/logger.js';
 import {
   UserNotFoundError,
   UserValidationError,
+  handleServiceError,
 } from '#common/errors/index.js';
 
 const deleteUserService = async ({ user_id }) => {
@@ -47,8 +48,7 @@ const deleteUserService = async ({ user_id }) => {
       deletedUser: user_to_delete,
     };
   } catch (error) {
-    logError('DELETE', 'USER', error, { user_id });
-    throw error;
+    handleServiceError('DELETE', 'USER', error, { user_id });
   }
 };
 

@@ -1,4 +1,4 @@
-export { DomainError } from './domainError.js';
+export { DomainError } from './domain/domainError.js';
 
 export {
   UserNotFoundError,
@@ -7,7 +7,7 @@ export {
   UserDeletionError,
   UserValidationError,
   UserEmailAlreadyExistsError,
-} from './userErrors.js';
+} from './domain/userErrors.js';
 
 export {
   PostNotFoundError,
@@ -16,4 +16,16 @@ export {
   PostUpdateError,
   PostDeletionError,
   PostValidationError,
-} from './postErrors.js';
+} from './domain/postErrors.js';
+
+export {
+  ForeignKeyViolationError,
+  UserHasReferencesError,
+  PostHasReferencesError,
+  InvalidReferenceError,
+} from './database/databaseFKErrors.js';
+
+export {
+  transformDatabaseError,
+  handleServiceError,
+} from './database/databaseErrorTransformer.js';

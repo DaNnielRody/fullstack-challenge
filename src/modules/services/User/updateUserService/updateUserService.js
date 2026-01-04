@@ -7,7 +7,7 @@ import { logUpdate, logError } from '#common/services/logger/logger.js';
 import {
   UserNotFoundError,
   UserValidationError,
-  UserEmailAlreadyExistsError,
+  handleServiceError,
 } from '#common/errors/index.js';
 
 const salt = bcrypt.genSaltSync(10);
@@ -64,19 +64,10 @@ const updateUserService = async ({
       },
     };
   } catch (error) {
-    if (
-      error.code === 'ER_DUP_ENTRY' ||
-      error.code === '23505' ||
-      (error.message &&
-        error.message.includes('unique') &&
-        error.message.includes('user_email'))
-    ) {
-      const duplicateError = new UserEmailAlreadyExistsError(user_email);
-      logError('UPDATE', 'USER', duplicateError, { user_id: id, user_email });
-      throw duplicateError;
-    }
-    logError('UPDATE', 'USER', error, { user_id: id });
-    throw error;
+    handleServiceError('UPDATE', 'USER', error, {
+      user_id: id,
+      user_email,
+    });
   }
 };
 

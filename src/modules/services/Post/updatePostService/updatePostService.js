@@ -2,10 +2,11 @@ import {
   getPostByPostIdRepositories,
   updatePostRepositories,
 } from '#repositories/index.js';
-import { logUpdate, logError } from '#common/services/logger/logger.js';
+import { logUpdate } from '#common/services/logger/logger.js';
 import {
   PostNotFoundError,
   PostValidationError,
+  handleServiceError,
 } from '#common/errors/index.js';
 
 const updatePostService = async ({ id, author_id, post_text }) => {
@@ -59,8 +60,10 @@ const updatePostService = async ({ id, author_id, post_text }) => {
       },
     };
   } catch (error) {
-    logError('UPDATE', 'POST', error, { post_id: id });
-    throw error;
+    handleServiceError('UPDATE', 'POST', error, {
+      post_id: id,
+      author_id,
+    });
   }
 };
 

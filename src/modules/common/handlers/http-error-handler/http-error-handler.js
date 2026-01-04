@@ -33,6 +33,12 @@ const httpErrorHandler = ({ req, res, error }) => {
     if (error.email) {
       response.email = error.email;
     }
+    if (error.entityId) {
+      response.entity_id = error.entityId;
+    }
+    if (error.referenceId) {
+      response.reference_id = error.referenceId;
+    }
   } else if (is_internal) {
     response = {
       type: `internal server error (${error_id})`,

@@ -2,10 +2,11 @@ import {
   getPostByPostIdRepositories,
   deletePostRepositories,
 } from '#repositories/index.js';
-import { logDelete, logError } from '#common/services/logger/logger.js';
+import { logDelete } from '#common/services/logger/logger.js';
 import {
   PostNotFoundError,
   PostValidationError,
+  handleServiceError,
 } from '#common/errors/index.js';
 
 const deletePostService = async ({ post_id }) => {
@@ -46,8 +47,7 @@ const deletePostService = async ({ post_id }) => {
       deletedPost: post_to_delete,
     };
   } catch (error) {
-    logError('DELETE', 'POST', error, { post_id });
-    throw error;
+    handleServiceError('DELETE', 'POST', error, { post_id });
   }
 };
 

@@ -1,10 +1,11 @@
 import { getUserByIdService } from '#services/User/getUserByIdService/getUserByIdService.js';
 import { createPostRepositories } from '#repositories/index.js';
-import { logCreate, logError } from '#common/services/logger/logger.js';
+import { logCreate } from '#common/services/logger/logger.js';
 import {
   AuthorNotFoundError,
   PostCreationError,
   PostValidationError,
+  handleServiceError,
 } from '#common/errors/index.js';
 
 const createPostService = async (post) => {
@@ -55,8 +56,9 @@ const createPostService = async (post) => {
       post_created_id: post_created,
     };
   } catch (error) {
-    logError('CREATE', 'POST', error, { author_id: post.author_id });
-    throw error;
+    handleServiceError('CREATE', 'POST', error, {
+      author_id: post.author_id,
+    });
   }
 };
 

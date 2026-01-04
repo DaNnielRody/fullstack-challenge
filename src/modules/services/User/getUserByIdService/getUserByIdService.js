@@ -1,6 +1,9 @@
 import { getUsersByIdRepositories } from '#repositories/index.js';
-import { logRead, logError } from '#common/services/logger/logger.js';
-import { UserValidationError } from '#common/errors/index.js';
+import { logRead } from '#common/services/logger/logger.js';
+import {
+  UserValidationError,
+  handleServiceError,
+} from '#common/errors/index.js';
 
 const getUserByIdService = async ({ user_id }) => {
   try {
@@ -25,8 +28,7 @@ const getUserByIdService = async ({ user_id }) => {
       user: users,
     };
   } catch (error) {
-    logError('READ', 'USER', error, { user_id });
-    throw error;
+    handleServiceError('READ', 'USER', error, { user_id });
   }
 };
 

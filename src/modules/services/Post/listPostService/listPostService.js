@@ -1,9 +1,10 @@
 import { getUserByIdService } from '#services/User/getUserByIdService/getUserByIdService.js';
 import { getPostByUserIdRepositories } from '#repositories/index.js';
-import { logList, logError } from '#common/services/logger/logger.js';
+import { logList } from '#common/services/logger/logger.js';
 import {
   AuthorNotFoundError,
   PostValidationError,
+  handleServiceError,
 } from '#common/errors/index.js';
 
 const getPostByUserIdService = async ({ user_id }) => {
@@ -39,8 +40,7 @@ const getPostByUserIdService = async ({ user_id }) => {
       posts,
     };
   } catch (error) {
-    logError('LIST', 'POST', error, { user_id });
-    throw error;
+    handleServiceError('LIST', 'POST', error, { user_id });
   }
 };
 
