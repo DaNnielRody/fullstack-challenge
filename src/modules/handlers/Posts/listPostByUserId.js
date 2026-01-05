@@ -20,7 +20,7 @@ const listPostByUserIdHandler = async (req, res, next) => {
       user_id,
     });
 
-    return res.status(httpStatusCodes.OK).send({ posts });
+    return res.status(httpStatusCodes.OK).send(posts);
   } catch (error) {
     return httpErrorHandler({ req, res, error });
   }
