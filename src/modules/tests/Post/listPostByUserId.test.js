@@ -28,20 +28,21 @@ jest.unstable_mockModule('#common/handlers/index.js', () => ({
   httpErrorHandler: mockHttpErrorHandler,
 }));
 
-const { listPostByIdHandler } = await import('#handlers/Posts/listPostById.js');
-const {
-  PostValidationError,
-  AuthorNotFoundError,
-} = await import('#common/errors/index.js');
+const { listPostByUserIdHandler } = await import(
+  '#handlers/Posts/listPostByUserId.js'
+);
+const { PostValidationError, AuthorNotFoundError } = await import(
+  '#common/errors/index.js'
+);
 
-describe('listPostByIdHandler', () => {
+describe('listPostByUserIdHandler', () => {
   let req, res, next;
 
   beforeEach(() => {
     jest.clearAllMocks();
 
     req = {
-      query: {},
+      params: {},
     };
 
     res = {
@@ -69,14 +70,14 @@ describe('listPostByIdHandler', () => {
         },
       ];
 
-      req.query.user_id = userId.toString();
+      req.params.id = userId.toString();
 
       mockValidatePositiveIntegerAndThrow.mockReturnValue(userId);
       mockGetPostByUserIdService.mockResolvedValue({
         posts: mockPosts,
       });
 
-      await listPostByIdHandler(req, res, next);
+      await listPostByUserIdHandler(req, res, next);
 
       expect(mockValidatePositiveIntegerAndThrow).toHaveBeenCalledWith(
         userId.toString(),
@@ -96,14 +97,14 @@ describe('listPostByIdHandler', () => {
     it('deve retornar lista vazia quando usuário não tem posts', async () => {
       const userId = 1;
 
-      req.query.user_id = userId.toString();
+      req.params.id = userId.toString();
 
       mockValidatePositiveIntegerAndThrow.mockReturnValue(userId);
       mockGetPostByUserIdService.mockResolvedValue({
         posts: [],
       });
 
-      await listPostByIdHandler(req, res, next);
+      await listPostByUserIdHandler(req, res, next);
 
       expect(mockGetPostByUserIdService).toHaveBeenCalledWith({
         user_id: userId,
@@ -115,7 +116,7 @@ describe('listPostByIdHandler', () => {
 
   describe('Cenários de erro - Validação de user_id', () => {
     it('deve retornar erro quando user_id não é um inteiro positivo', async () => {
-      req.query.user_id = '0';
+      req.params.id = '0';
 
       const validationError = new PostValidationError(
         'Invalid user_id: must be a positive integer',
@@ -129,7 +130,7 @@ describe('listPostByIdHandler', () => {
         }
       );
 
-      await listPostByIdHandler(req, res, next);
+      await listPostByUserIdHandler(req, res, next);
 
       expect(mockValidatePositiveIntegerAndThrow).toHaveBeenCalledWith(
         '0',
@@ -154,7 +155,7 @@ describe('listPostByIdHandler', () => {
     });
 
     it('deve retornar erro quando user_id é negativo', async () => {
-      req.query.user_id = '-1';
+      req.params.id = '-1';
 
       const validationError = new PostValidationError(
         'Invalid user_id: must be a positive integer',
@@ -168,7 +169,7 @@ describe('listPostByIdHandler', () => {
         }
       );
 
-      await listPostByIdHandler(req, res, next);
+      await listPostByUserIdHandler(req, res, next);
 
       expect(mockValidatePositiveIntegerAndThrow).toHaveBeenCalledWith(
         '-1',
@@ -187,7 +188,7 @@ describe('listPostByIdHandler', () => {
     });
 
     it('deve retornar erro quando user_id não é um número', async () => {
-      req.query.user_id = 'abc';
+      req.params.id = 'abc';
 
       const validationError = new PostValidationError(
         'Invalid user_id: must be a positive integer',
@@ -201,7 +202,7 @@ describe('listPostByIdHandler', () => {
         }
       );
 
-      await listPostByIdHandler(req, res, next);
+      await listPostByUserIdHandler(req, res, next);
 
       expect(mockValidatePositiveIntegerAndThrow).toHaveBeenCalledWith(
         'abc',
@@ -224,14 +225,14 @@ describe('listPostByIdHandler', () => {
     it('deve retornar erro quando autor não é encontrado', async () => {
       const userId = 999;
 
-      req.query.user_id = userId.toString();
+      req.params.id = userId.toString();
 
       mockValidatePositiveIntegerAndThrow.mockReturnValue(userId);
 
       const notFoundError = new AuthorNotFoundError(userId);
       mockGetPostByUserIdService.mockRejectedValue(notFoundError);
 
-      await listPostByIdHandler(req, res, next);
+      await listPostByUserIdHandler(req, res, next);
 
       expect(mockGetPostByUserIdService).toHaveBeenCalledWith({
         user_id: userId,
@@ -248,14 +249,14 @@ describe('listPostByIdHandler', () => {
     it('deve retornar erro quando service lança exceção genérica', async () => {
       const userId = 1;
 
-      req.query.user_id = userId.toString();
+      req.params.id = userId.toString();
 
       mockValidatePositiveIntegerAndThrow.mockReturnValue(userId);
 
       const serviceError = new Error('Database connection failed');
       mockGetPostByUserIdService.mockRejectedValue(serviceError);
 
-      await listPostByIdHandler(req, res, next);
+      await listPostByUserIdHandler(req, res, next);
 
       expect(mockGetPostByUserIdService).toHaveBeenCalledWith({
         user_id: userId,

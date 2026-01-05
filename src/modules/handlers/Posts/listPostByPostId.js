@@ -1,29 +1,30 @@
 import httpStatusCodes from 'http-status-codes';
 import { httpErrorHandler } from '#common/handlers/index.js';
-import { getPostByUserIdService } from '#services/index.js';
+import { getPostByPostIdService } from '#services/index.js';
 import { PostValidationError } from '#common/errors/index.js';
 import { logError } from '#common/services/logger/logger.js';
 import { validatePositiveIntegerAndThrow } from '#common/validations/index.js';
 
-const listPostByIdHandler = async (req, res, next) => {
+const listPostByPostIdHandler = async (req, res, next) => {
   try {
-    const user_id = validatePositiveIntegerAndThrow(
-      req.query.user_id,
-      'user_id',
+    const post_id = validatePositiveIntegerAndThrow(
+      req.params.id,
+      'post_id',
       PostValidationError,
       logError,
-      'LIST',
+      'READ',
       'POST'
     );
 
-    const { posts } = await getPostByUserIdService({
-      user_id,
+    const { post } = await getPostByPostIdService({
+      post_id,
     });
 
-    return res.status(httpStatusCodes.OK).send({ posts });
+    return res.status(httpStatusCodes.OK).send(post);
   } catch (error) {
     return httpErrorHandler({ req, res, error });
   }
 };
 
-export { listPostByIdHandler };
+export { listPostByPostIdHandler };
+
