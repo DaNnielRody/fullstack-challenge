@@ -91,7 +91,7 @@ describe('listPostByUserIdHandler', () => {
         user_id: userId,
       });
       expect(res.status).toHaveBeenCalledWith(httpStatusCodes.OK);
-      expect(res.send).toHaveBeenCalledWith({ posts: mockPosts });
+      expect(res.send).toHaveBeenCalledWith(mockPosts);
     });
 
     it('deve retornar lista vazia quando usuário não tem posts', async () => {
@@ -110,7 +110,7 @@ describe('listPostByUserIdHandler', () => {
         user_id: userId,
       });
       expect(res.status).toHaveBeenCalledWith(httpStatusCodes.OK);
-      expect(res.send).toHaveBeenCalledWith({ posts: [] });
+      expect(res.send).toHaveBeenCalledWith([]);
     });
   });
 

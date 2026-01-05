@@ -7,7 +7,7 @@ const listUserHandler = async (req, res, next) => {
     const users_response = await getAllUsersService();
     const users = users_response.users || [];
 
-    return res.status(httpStatusCodes.OK).send({ users });
+    return res.status(httpStatusCodes.OK).send(users);
   } catch (error) {
     return httpErrorHandler({ req, res, error });
   }

@@ -60,7 +60,7 @@ describe('listPostHandler', () => {
 
       expect(mockGetAllPostsService).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(httpStatusCodes.OK);
-      expect(res.send).toHaveBeenCalledWith({ posts: mockPosts });
+      expect(res.send).toHaveBeenCalledWith(mockPosts);
     });
 
     it('deve retornar lista vazia quando não há posts cadastrados', async () => {
@@ -72,7 +72,7 @@ describe('listPostHandler', () => {
 
       expect(mockGetAllPostsService).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(httpStatusCodes.OK);
-      expect(res.send).toHaveBeenCalledWith({ posts: [] });
+      expect(res.send).toHaveBeenCalledWith([]);
     });
 
     it('deve retornar lista vazia quando service retorna undefined', async () => {
@@ -84,7 +84,7 @@ describe('listPostHandler', () => {
 
       expect(mockGetAllPostsService).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(httpStatusCodes.OK);
-      expect(res.send).toHaveBeenCalledWith({ posts: [] });
+      expect(res.send).toHaveBeenCalledWith([]);
     });
   });
 

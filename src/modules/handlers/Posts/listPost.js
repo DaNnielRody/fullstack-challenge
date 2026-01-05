@@ -7,7 +7,7 @@ const listPostHandler = async (req, res, next) => {
     const posts_response = await getAllPostsService();
     const posts = posts_response.posts || [];
 
-    return res.status(httpStatusCodes.OK).send({ posts });
+    return res.status(httpStatusCodes.OK).send(posts);
   } catch (error) {
     return httpErrorHandler({ req, res, error });
   }
