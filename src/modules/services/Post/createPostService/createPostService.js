@@ -1,5 +1,7 @@
-import { getUserByIdService } from '#services/User/getUserByIdService/getUserByIdService.js';
-import { createPostRepositories } from '#repositories/index.js';
+import {
+  createPostRepositories,
+  getUsersByIdRepositories,
+} from '#repositories/index.js';
 import { logCreate, logError } from '#common/services/logger/logger.js';
 import {
   AuthorNotFoundError,
@@ -17,12 +19,12 @@ const createPostService = async (post) => {
     const { author_id } = post;
     const { post_text } = post;
 
-    const { user } = await getUserByIdService({
+    const { users = [] } = await getUsersByIdRepositories({
       user_id: author_id,
     });
 
     validateArrayExistsAndThrow(
-      user,
+      users,
       'author',
       AuthorNotFoundError,
       logError,
