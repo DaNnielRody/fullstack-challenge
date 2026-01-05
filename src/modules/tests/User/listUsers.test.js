@@ -60,7 +60,7 @@ describe('listUserHandler', () => {
 
       expect(mockGetAllUsersService).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(httpStatusCodes.OK);
-      expect(res.send).toHaveBeenCalledWith({ users: mockUsers });
+      expect(res.send).toHaveBeenCalledWith(mockUsers);
     });
 
     it('deve retornar lista vazia quando não há usuários cadastrados', async () => {
@@ -72,7 +72,7 @@ describe('listUserHandler', () => {
 
       expect(mockGetAllUsersService).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(httpStatusCodes.OK);
-      expect(res.send).toHaveBeenCalledWith({ users: [] });
+      expect(res.send).toHaveBeenCalledWith([]);
     });
 
     it('deve retornar lista vazia quando service retorna undefined', async () => {
@@ -84,7 +84,7 @@ describe('listUserHandler', () => {
 
       expect(mockGetAllUsersService).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(httpStatusCodes.OK);
-      expect(res.send).toHaveBeenCalledWith({ users: [] });
+      expect(res.send).toHaveBeenCalledWith([]);
     });
   });
 
