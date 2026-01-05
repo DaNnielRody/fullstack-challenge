@@ -6,21 +6,11 @@ import {
   handleServiceError,
 } from '#common/errors/index.js';
 import {
-  validatePositiveIntegerAndThrow,
   validateArrayHasOneAndThrow,
 } from '#common/validations/index.js';
 
 const getPostByPostIdService = async ({ post_id }) => {
   try {
-    validatePositiveIntegerAndThrow(
-      post_id,
-      'post_id',
-      PostValidationError,
-      logError,
-      'READ',
-      'POST'
-    );
-
     const { posts = [] } = await getPostByPostIdRepositories({
       post_id,
     });

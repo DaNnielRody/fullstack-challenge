@@ -9,21 +9,11 @@ import {
   handleServiceError,
 } from '#common/errors/index.js';
 import {
-  validatePositiveIntegerAndThrow,
   validateArrayHasOneAndThrow,
 } from '#common/validations/index.js';
 
 const deleteUserService = async ({ user_id }) => {
   try {
-    validatePositiveIntegerAndThrow(
-      user_id,
-      'user_id',
-      UserValidationError,
-      logError,
-      'DELETE',
-      'USER'
-    );
-
     const { users = [] } = await getUserRepositories({
       user_id,
     });

@@ -7,21 +7,11 @@ import {
   handleServiceError,
 } from '#common/errors/index.js';
 import {
-  validatePositiveIntegerAndThrow,
   validateArrayExistsAndThrow,
 } from '#common/validations/index.js';
 
 const getPostByUserIdService = async ({ user_id }) => {
   try {
-    validatePositiveIntegerAndThrow(
-      user_id,
-      'user_id',
-      PostValidationError,
-      logError,
-      'LIST',
-      'POST'
-    );
-
     const { user } = await getUserByIdService({
       user_id,
     });

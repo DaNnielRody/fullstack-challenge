@@ -12,8 +12,6 @@ import {
   handleServiceError,
 } from '#common/errors/index.js';
 import {
-  validateStringAndThrow,
-  validatePositiveIntegerAndThrow,
   validateArrayHasOneAndThrow,
   validateArrayEmptyAndThrow,
 } from '#common/validations/index.js';
@@ -27,15 +25,6 @@ const updateUserService = async ({
   full_name,
 }) => {
   try {
-    validatePositiveIntegerAndThrow(
-      user_id,
-      'user_id',
-      UserValidationError,
-      logError,
-      'UPDATE',
-      'USER'
-    );
-
     const { users = [] } = await getUserRepositories({
       user_id,
     });
@@ -53,16 +42,6 @@ const updateUserService = async ({
     const currentUser = users[0];
 
     if (user_email !== currentUser.user_email) {
-      validateStringAndThrow(
-        user_email,
-        'user_email',
-        UserValidationError,
-        logError,
-        'UPDATE',
-        'USER',
-        { user_id }
-      );
-
       const { users: existingUsers = [] } = await getUserByEmailRepositories({
         user_email,
       });

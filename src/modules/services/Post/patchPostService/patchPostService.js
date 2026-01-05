@@ -9,22 +9,11 @@ import {
   handleServiceError,
 } from '#common/errors/index.js';
 import {
-  validateStringAndThrow,
-  validatePositiveIntegerAndThrow,
   validateArrayHasOneAndThrow,
 } from '#common/validations/index.js';
 
 const patchPostService = async ({ post_id, author_id, post_text }) => {
   try {
-    validatePositiveIntegerAndThrow(
-      post_id,
-      'post_id',
-      PostValidationError,
-      logError,
-      'PATCH',
-      'POST'
-    );
-
     const { posts = [] } = await getPostByPostIdRepositories({
       post_id,
     });
@@ -38,30 +27,6 @@ const patchPostService = async ({ post_id, author_id, post_text }) => {
       'POST',
       { post_id }
     );
-
-    if (author_id !== undefined) {
-      validatePositiveIntegerAndThrow(
-        author_id,
-        'author_id',
-        PostValidationError,
-        logError,
-        'PATCH',
-        'POST',
-        { post_id }
-      );
-    }
-
-    if (post_text !== undefined) {
-      validateStringAndThrow(
-        post_text,
-        'post_text',
-        PostValidationError,
-        logError,
-        'PATCH',
-        'POST',
-        { post_id, author_id }
-      );
-    }
 
     await updatePostRepositories({
       post_id,
