@@ -4,19 +4,20 @@ import {
   UserValidationError,
   handleServiceError,
 } from '#common/errors/index.js';
+import {
+  validatePositiveIntegerAndThrow,
+} from '#common/validations/index.js';
 
 const getUserByIdService = async ({ user_id }) => {
   try {
-    const has_user_id = Number.isInteger(user_id) && user_id > 0;
-
-    if (has_user_id === false) {
-      const error = new UserValidationError(
-        'Invalid user_id: must be a positive integer',
-        { user_id }
-      );
-      logError('READ', 'USER', error, { user_id });
-      throw error;
-    }
+    validatePositiveIntegerAndThrow(
+      user_id,
+      'user_id',
+      UserValidationError,
+      logError,
+      'READ',
+      'USER'
+    );
 
     const { users = [] } = await getUsersByIdRepositories({
       user_id,

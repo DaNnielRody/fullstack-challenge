@@ -8,37 +8,59 @@ import {
   PostValidationError,
   handleServiceError,
 } from '#common/errors/index.js';
+import {
+  validateStringAndThrow,
+  validatePositiveIntegerAndThrow,
+  validateArrayHasOneAndThrow,
+} from '#common/validations/index.js';
 
 const patchPostService = async ({ post_id, author_id, post_text }) => {
   try {
-    if (!Number.isInteger(post_id) || post_id <= 0) {
-      const error = new PostValidationError(
-        'Invalid post id: must be a positive integer',
-        { post_id }
-      );
-      logError('PATCH', 'POST', error, { post_id });
-      throw error;
-    }
+    validatePositiveIntegerAndThrow(
+      post_id,
+      'post_id',
+      PostValidationError,
+      logError,
+      'PATCH',
+      'POST'
+    );
 
     const { posts = [] } = await getPostByPostIdRepositories({
       post_id,
     });
 
-    const has_post = Array.isArray(posts) && posts.length === 1;
+    validateArrayHasOneAndThrow(
+      posts,
+      'post',
+      PostNotFoundError,
+      logError,
+      'PATCH',
+      'POST',
+      { post_id }
+    );
 
-    if (!has_post) {
-      const error = new PostNotFoundError(post_id);
-      logError('PATCH', 'POST', error, { post_id });
-      throw error;
+    if (author_id !== undefined) {
+      validatePositiveIntegerAndThrow(
+        author_id,
+        'author_id',
+        PostValidationError,
+        logError,
+        'PATCH',
+        'POST',
+        { post_id }
+      );
     }
 
-    if (author_id && (!Number.isInteger(author_id) || author_id <= 0)) {
-      const error = new PostValidationError(
-        'Invalid author_id: must be a positive integer',
-        { author_id }
+    if (post_text !== undefined) {
+      validateStringAndThrow(
+        post_text,
+        'post_text',
+        PostValidationError,
+        logError,
+        'PATCH',
+        'POST',
+        { post_id, author_id }
       );
-      logError('PATCH', 'POST', error, { post_id, author_id });
-      throw error;
     }
 
     await updatePostRepositories({

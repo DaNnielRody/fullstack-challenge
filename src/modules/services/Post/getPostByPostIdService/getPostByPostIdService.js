@@ -5,29 +5,35 @@ import {
   PostValidationError,
   handleServiceError,
 } from '#common/errors/index.js';
+import {
+  validatePositiveIntegerAndThrow,
+  validateArrayHasOneAndThrow,
+} from '#common/validations/index.js';
 
 const getPostByPostIdService = async ({ post_id }) => {
   try {
-    if (!Number.isInteger(post_id) || post_id <= 0) {
-      const error = new PostValidationError(
-        'Invalid post_id: must be a positive integer',
-        { post_id }
-      );
-      logError('READ', 'POST', error, { post_id });
-      throw error;
-    }
+    validatePositiveIntegerAndThrow(
+      post_id,
+      'post_id',
+      PostValidationError,
+      logError,
+      'READ',
+      'POST'
+    );
 
     const { posts = [] } = await getPostByPostIdRepositories({
       post_id,
     });
 
-    const has_post = Array.isArray(posts) && posts.length === 1;
-
-    if (!has_post) {
-      const error = new PostNotFoundError(post_id);
-      logError('READ', 'POST', error, { post_id });
-      throw error;
-    }
+    validateArrayHasOneAndThrow(
+      posts,
+      'post',
+      PostNotFoundError,
+      logError,
+      'READ',
+      'POST',
+      { post_id }
+    );
 
     const [post] = posts;
 

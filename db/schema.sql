@@ -10,6 +10,6 @@ CREATE TABLE users (
 CREATE TABLE posts (
     post_id INT PRIMARY KEY AUTO_INCREMENT,
     author_id INT NOT NULL,
-    post_text VARCHAR(200),
+    post_text VARCHAR(200) NOT NULL,
     CONSTRAINT fk_posts_users FOREIGN KEY (author_id) REFERENCES users(user_id)
 );

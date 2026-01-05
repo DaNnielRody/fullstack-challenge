@@ -7,54 +7,64 @@ import {
   PostValidationError,
   handleServiceError,
 } from '#common/errors/index.js';
+import {
+  validateStringAndThrow,
+  validatePositiveIntegerAndThrow,
+  validateArrayExistsAndThrow,
+  validateCreationResultAndThrow,
+} from '#common/validations/index.js';
 
 const createPostService = async (post) => {
   try {
     const { author_id } = post;
     const { post_text } = post;
 
-    if (!Number.isInteger(author_id) || author_id <= 0) {
-      const error = new PostValidationError(
-        'Invalid author_id: must be a positive integer',
-        { author_id }
-      );
-      logError('CREATE', 'POST', error, { author_id });
-      throw error;
-    }
+    validatePositiveIntegerAndThrow(
+      author_id,
+      'author_id',
+      PostValidationError,
+      logError,
+      'CREATE',
+      'POST'
+    );
 
-    if (typeof post_text !== 'string' || post_text.trim().length === 0) {
-      const error = new PostValidationError(
-        'Invalid post_text: must be a non-empty string',
-        { post_text }
-      );
-      logError('CREATE', 'POST', error, { author_id });
-      throw error;
-    }
+    validateStringAndThrow(
+      post_text,
+      'post_text',
+      PostValidationError,
+      logError,
+      'CREATE',
+      'POST',
+      { author_id }
+    );
 
     const { user } = await getUserByIdService({
       user_id: author_id,
     });
 
-    const has_author = Array.isArray(user) && user.length > 0;
-
-    if (has_author === false) {
-      const error = new AuthorNotFoundError(author_id);
-      logError('CREATE', 'POST', error, { author_id });
-      throw error;
-    }
+    validateArrayExistsAndThrow(
+      user,
+      'author',
+      AuthorNotFoundError,
+      logError,
+      'CREATE',
+      'POST',
+      { author_id }
+    );
 
     const { post_created } = await createPostRepositories({
       post,
     });
 
-    const has_post_created =
-      Array.isArray(post_created) && post_created.length > 0;
-
-    if (has_post_created === false) {
-      const error = new PostCreationError('Failed to create post');
-      logError('CREATE', 'POST', error, { author_id });
-      throw error;
-    }
+    validateCreationResultAndThrow(
+      post_created,
+      'post',
+      PostCreationError,
+      logError,
+      'CREATE',
+      'POST',
+      { author_id }
+    );
 
     logCreate('POST', {
       post_id: post_created[0],
