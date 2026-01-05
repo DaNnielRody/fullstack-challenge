@@ -1,4 +1,4 @@
-import { knex } from '#common/handlers/index.js';
+import { knex } from '#common/infrastructure/database/index.js';
 
 const getUserByEmailRepositories = async ({ user_email } = {}) => {
   const users = await knex('users')

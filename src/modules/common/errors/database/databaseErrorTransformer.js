@@ -1,15 +1,11 @@
 import {
   UserEmailAlreadyExistsError,
   UserNotFoundError,
-} from '../domain/userErrors.js';
-import {
   AuthorNotFoundError,
   PostNotFoundError,
-} from '../domain/postErrors.js';
-import {
   UserHasReferencesError,
   PostHasReferencesError,
-} from './databaseFKErrors.js';
+} from '../index.js';
 import { logError } from '#common/services/logger/logger.js';
 
 const transformDatabaseError = (error, context = {}) => {

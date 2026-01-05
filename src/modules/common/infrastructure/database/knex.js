@@ -16,9 +16,7 @@ const knex = knexLib({
 });
 
 const getTransaction = async () => {
-
     const transaction = await knex.transaction()
-
     return {transaction};
 }
 
@@ -27,3 +25,4 @@ const commitTransaction = ({ transaction }) => transaction.commit();
 const rollbackTransaction = ({ transaction }) => transaction.rollback();
 
 export { getTransaction, commitTransaction, rollbackTransaction, knex };
+

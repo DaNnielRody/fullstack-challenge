@@ -1,6 +1,6 @@
 import { StatusCodes } from 'http-status-codes';
 import { v4 as uuidv4 } from 'uuid';
-import { DomainError } from '#common/errors/index.js';
+import { DomainError } from '../index.js';
 
 const httpErrorHandler = ({ req, res, error }) => {
   const response_status_code =
@@ -39,9 +39,9 @@ const httpErrorHandler = ({ req, res, error }) => {
       method: req.method,
       path: req.originalUrl || req.path,
       status: response_status_code,
-      ip: req.ip || req.headers['x-forwarded-for']?.split(',')[0]?.trim(),
+      ip: req.ip || req.headers?.['x-forwarded-for']?.split(',')[0]?.trim(),
       user_agent: (() => {
-        const ua = req.headers['user-agent'];
+        const ua = req.headers?.['user-agent'];
         if (!ua) return undefined;
         const chromeMatch = ua.match(/Chrome\/([^\s]+)/);
         if (chromeMatch) return `Chrome/${chromeMatch[1]}`;
@@ -73,3 +73,5 @@ const httpErrorHandler = ({ req, res, error }) => {
   return res.status(response_status_code).json(response).end();
 };
 export { httpErrorHandler };
+
+

@@ -1,4 +1,4 @@
-import { knex } from '#common/handlers/index.js';
+import { knex } from '#common/infrastructure/database/index.js';
 
 const getUsersByIdRepositories = async ({ user_id } = {}) => {
   const users = await knex('users')

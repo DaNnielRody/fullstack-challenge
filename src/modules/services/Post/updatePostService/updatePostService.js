@@ -9,42 +9,11 @@ import {
   handleServiceError,
 } from '#common/errors/index.js';
 import {
-  validateStringAndThrow,
-  validatePositiveIntegerAndThrow,
   validateArrayHasOneAndThrow,
 } from '#common/validations/index.js';
 
 const updatePostService = async ({ post_id, author_id, post_text }) => {
   try {
-    validatePositiveIntegerAndThrow(
-      post_id,
-      'post_id',
-      PostValidationError,
-      logError,
-      'UPDATE',
-      'POST'
-    );
-
-    validatePositiveIntegerAndThrow(
-      author_id,
-      'author_id',
-      PostValidationError,
-      logError,
-      'UPDATE',
-      'POST',
-      { post_id }
-    );
-
-    validateStringAndThrow(
-      post_text,
-      'post_text',
-      PostValidationError,
-      logError,
-      'UPDATE',
-      'POST',
-      { post_id, author_id }
-    );
-
     const { posts = [] } = await getPostByPostIdRepositories({
       post_id,
     });

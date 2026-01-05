@@ -1,5 +1,7 @@
-import { getUserByIdService } from '#services/User/getUserByIdService/getUserByIdService.js';
-import { getPostByUserIdRepositories } from '#repositories/index.js';
+import {
+  getPostByUserIdRepositories,
+  getUsersByIdRepositories,
+} from '#repositories/index.js';
 import { logList, logError } from '#common/services/logger/logger.js';
 import {
   AuthorNotFoundError,
@@ -7,27 +9,17 @@ import {
   handleServiceError,
 } from '#common/errors/index.js';
 import {
-  validatePositiveIntegerAndThrow,
   validateArrayExistsAndThrow,
 } from '#common/validations/index.js';
 
 const getPostByUserIdService = async ({ user_id }) => {
   try {
-    validatePositiveIntegerAndThrow(
-      user_id,
-      'user_id',
-      PostValidationError,
-      logError,
-      'LIST',
-      'POST'
-    );
-
-    const { user } = await getUserByIdService({
+    const { users = [] } = await getUsersByIdRepositories({
       user_id,
     });
 
     validateArrayExistsAndThrow(
-      user,
+      users,
       'author',
       AuthorNotFoundError,
       logError,

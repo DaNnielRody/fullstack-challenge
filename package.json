@@ -13,6 +13,7 @@
     "#common/services/*": "./src/modules/common/services/*",
     "#common/errors/*": "./src/modules/common/errors/*",
     "#common/validations/*": "./src/modules/common/validations/*",
+    "#common/infrastructure/*": "./src/modules/common/infrastructure/*",
     "#routes/*": "./src/modules/routes/*"
   },
   "dependencies": {
