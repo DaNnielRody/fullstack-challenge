@@ -1,8 +1,9 @@
 import winston, { format, createLogger } from 'winston';
 import path from 'path';
 import fs from 'fs';
+import config from '#modules/config.js';
 
-const logsDir = process.env.LOG_DIR || path.join(process.cwd(), 'logs');
+const logsDir = path.join(process.cwd(), config.logger.dir);
 
 if (!fs.existsSync(logsDir)) {
   fs.mkdirSync(logsDir, { recursive: true });
@@ -46,7 +47,7 @@ const consoleFormat = combine(
 );
 
 const logger = createLogger({
-  level: process.env.LOG_LEVEL,
+  level: config.logger.level,
   levels: logLevels,
   format: logFormat,
   transports: [
