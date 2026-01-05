@@ -2,7 +2,7 @@ import {
   getTransaction,
   commitTransaction,
   rollbackTransaction,
-} from '#common/handlers/index.js';
+} from '#common/infrastructure/database/index.js';
 
 const updatePostRepositories = async ({ post_id, author_id, post_text }) => {
   const { transaction } = await getTransaction();
