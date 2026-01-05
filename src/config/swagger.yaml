@@ -18,10 +18,13 @@ definitions:
     additionalProperties: false
     type: 'object'
     required:
+      - 'user_id'
       - 'full_name'
       - 'user_email'
       - 'user_password'
     properties:
+      user_id:
+        type: 'integer'
       full_name:
         type: 'string'
       user_email:
@@ -51,40 +54,57 @@ definitions:
         type: 'integer'
       post_text:
         type: 'string'
-  users_response:
+  post_response:
     additionalProperties: false
     type: 'object'
     properties:
-      users:
-        type: array
-        items:
-          $ref: '#/definitions/user_response'
-  posts_response:
+      post_id:
+        type: 'integer'
+      author_id:
+        type: 'integer'
+      post_text:
+        type: 'string'
+  error:
     additionalProperties: false
     type: 'object'
     properties:
-      posts:
-        type: array
-        items:
-          $ref: '#/definitions/post'
+      code:
+        type: 'string'
+        description: Error code
+      message:
+        type: 'string'
+        description: Error message
 paths:
   /user:
     get:
       tags:
         - 'Users'
       x-swagger-router-controller: app
-      summary: list users
+      summary: List all users
+      description: |
+        Retrieves all users registered in the system.
+        The response does not include sensitive fields such as passwords.
       operationId: listUserHandler
       responses:
         200:
           description: 'users retrieved'
           schema:
-            $ref: '#/definitions/users_response'
+            type: array
+            items:
+              $ref: '#/definitions/user_response'
+        500:
+          description: 'Internal server error'
+          schema:
+            $ref: '#/definitions/error'
     post:
       tags:
         - 'Users'
       x-swagger-router-controller: app
-      summary: create user
+      summary: Create a new user
+      description: |
+        Creates a new user with name, email and password.
+        The password must be provided in plain text and will be securely stored.
+        The email must be unique in the system.
       operationId: createUserHandler
       parameters:
         - in: body
@@ -109,12 +129,24 @@ paths:
           description: 'user created'
           schema:
             $ref: '#/definitions/user_response'
+        400:
+          description: 'Bad request - validation error'
+          schema:
+            $ref: '#/definitions/error'
+        500:
+          description: 'Internal server error'
+          schema:
+            $ref: '#/definitions/error'
   /user/{id}:
     get:
       tags:
         - 'Users'
       x-swagger-router-controller: app
-      summary: get user by id
+      summary: Get user by ID
+      description: |
+        Retrieves a specific user by their ID.
+        Returns user information without sensitive fields like password.
+        Returns 404 if the user is not found.
       operationId: listUserByIdHandler
       parameters:
         - name: id
@@ -127,11 +159,28 @@ paths:
           description: 'user retrieved'
           schema:
             $ref: '#/definitions/user_response'
+        400:
+          description: 'Bad request - invalid user ID'
+          schema:
+            $ref: '#/definitions/error'
+        404:
+          description: 'User not found'
+          schema:
+            $ref: '#/definitions/error'
+        500:
+          description: 'Internal server error'
+          schema:
+            $ref: '#/definitions/error'
     put:
       tags:
         - 'Users'
       x-swagger-router-controller: app
-      summary: update user (full update)
+      summary: Update user (full update)
+      description: |
+        Performs a complete update of the user information.
+        All fields (full_name, user_email, user_password) must be provided.
+        The email must be unique in the system.
+        Returns 404 if the user is not found.
       operationId: updateUserHandler
       parameters:
         - name: id
@@ -161,11 +210,29 @@ paths:
           description: 'user updated'
           schema:
             $ref: '#/definitions/user_response'
+        400:
+          description: 'Bad request - validation error or invalid data'
+          schema:
+            $ref: '#/definitions/error'
+        404:
+          description: 'User not found'
+          schema:
+            $ref: '#/definitions/error'
+        500:
+          description: 'Internal server error'
+          schema:
+            $ref: '#/definitions/error'
     patch:
       tags:
         - 'Users'
       x-swagger-router-controller: app
-      summary: partial update user
+      summary: Partially update user
+      description: |
+        Performs a partial update of the user information.
+        Only the fields provided in the request body will be updated.
+        Other fields will remain unchanged.
+        The email must be unique in the system if provided.
+        Returns 404 if the user is not found.
       operationId: patchUserHandler
       parameters:
         - name: id
@@ -191,11 +258,27 @@ paths:
           description: 'user updated'
           schema:
             $ref: '#/definitions/user_response'
+        400:
+          description: 'Bad request - validation error or invalid data'
+          schema:
+            $ref: '#/definitions/error'
+        404:
+          description: 'User not found'
+          schema:
+            $ref: '#/definitions/error'
+        500:
+          description: 'Internal server error'
+          schema:
+            $ref: '#/definitions/error'
     delete:
       tags:
         - 'Users'
       x-swagger-router-controller: app
-      summary: delete user
+      summary: Delete user
+      description: |
+        Permanently deletes a user from the system by their ID.
+        This action cannot be undone.
+        Returns 404 if the user is not found.
       operationId: deleteUserHandler
       parameters:
         - name: id
@@ -206,29 +289,49 @@ paths:
       responses:
         204:
           description: 'user deleted'
+        400:
+          description: 'Bad request - invalid user ID'
+          schema:
+            $ref: '#/definitions/error'
+        404:
+          description: 'User not found'
+          schema:
+            $ref: '#/definitions/error'
+        500:
+          description: 'Internal server error'
+          schema:
+            $ref: '#/definitions/error'
   /post:
     get:
       tags:
         - 'Posts'
       x-swagger-router-controller: app
-      summary: list posts
+      summary: List all posts
+      description: |
+        Retrieves all posts registered in the system.
+        Returns an array of posts with their ID, author ID, and text content.
+        Returns an empty array if there are no posts.
       operationId: listPostHandler
-      parameters:
-        - name: user_id
-          in: query
-          type: integer
-          required: false
-          description: Filter posts by user ID (optional - if not provided, returns all posts)
       responses:
         200:
           description: 'posts retrieved'
           schema:
-            $ref: '#/definitions/posts_response'
+            type: array
+            items:
+              $ref: '#/definitions/post_response'
+        500:
+          description: 'Internal server error'
+          schema:
+            $ref: '#/definitions/error'
     post:
       tags:
         - 'Posts'
       x-swagger-router-controller: app
-      summary: create post
+      summary: Create a new post
+      description: |
+        Creates a new post with text content and author ID.
+        The author_id must correspond to an existing user in the system.
+        Returns 404 if the author is not found.
       operationId: createPostHandler
       parameters:
         - in: body
@@ -250,12 +353,99 @@ paths:
           description: 'post created'
           schema:
             $ref: '#/definitions/post'
+        400:
+          description: 'Bad request - validation error or invalid data'
+          schema:
+            $ref: '#/definitions/error'
+        404:
+          description: 'Author not found'
+          schema:
+            $ref: '#/definitions/error'
+        500:
+          description: 'Internal server error'
+          schema:
+            $ref: '#/definitions/error'
+  /post/user/{id}:
+    get:
+      tags:
+        - 'Posts'
+      x-swagger-router-controller: app
+      summary: List posts by user ID
+      description: |
+        Retrieves all posts created by a specific user.
+        Returns an array of posts associated with the provided user ID.
+        Returns an empty array if the user has no posts.
+        Returns 404 if the user is not found.
+      operationId: listPostByUserIdHandler
+      parameters:
+        - name: id
+          in: path
+          type: integer
+          required: true
+          description: User ID
+      responses:
+        200:
+          description: 'posts retrieved'
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/post_response'
+        400:
+          description: 'Bad request - invalid user ID'
+          schema:
+            $ref: '#/definitions/error'
+        404:
+          description: 'User not found'
+          schema:
+            $ref: '#/definitions/error'
+        500:
+          description: 'Internal server error'
+          schema:
+            $ref: '#/definitions/error'
   /post/{id}:
+    get:
+      tags:
+        - 'Posts'
+      x-swagger-router-controller: app
+      summary: Get post by ID
+      description: |
+        Retrieves a specific post by its ID.
+        Returns the complete post information including post_id, author_id, and post_text.
+        Returns 404 if the post is not found.
+      operationId: listPostByPostIdHandler
+      parameters:
+        - name: id
+          in: path
+          type: integer
+          required: true
+          description: Post ID
+      responses:
+        200:
+          description: 'post retrieved'
+          schema:
+            $ref: '#/definitions/post_response'
+        400:
+          description: 'Bad request - invalid post ID'
+          schema:
+            $ref: '#/definitions/error'
+        404:
+          description: 'Post not found'
+          schema:
+            $ref: '#/definitions/error'
+        500:
+          description: 'Internal server error'
+          schema:
+            $ref: '#/definitions/error'
     put:
       tags:
         - 'Posts'
       x-swagger-router-controller: app
-      summary: update post (full update)
+      summary: Update post (full update)
+      description: |
+        Performs a complete update of the post information.
+        All fields (author_id, post_text) must be provided.
+        The author_id must correspond to an existing user in the system.
+        Returns 404 if the post or author is not found.
       operationId: updatePostHandler
       parameters:
         - name: id
@@ -282,11 +472,29 @@ paths:
           description: 'post updated'
           schema:
             $ref: '#/definitions/post'
+        400:
+          description: 'Bad request - validation error or invalid data'
+          schema:
+            $ref: '#/definitions/error'
+        404:
+          description: 'Post or author not found'
+          schema:
+            $ref: '#/definitions/error'
+        500:
+          description: 'Internal server error'
+          schema:
+            $ref: '#/definitions/error'
     patch:
       tags:
         - 'Posts'
       x-swagger-router-controller: app
-      summary: partial update post
+      summary: Partially update post
+      description: |
+        Performs a partial update of the post information.
+        Only the fields provided in the request body will be updated.
+        Other fields will remain unchanged.
+        The author_id must correspond to an existing user in the system if provided.
+        Returns 404 if the post or author is not found.
       operationId: patchPostHandler
       parameters:
         - name: id
@@ -310,11 +518,27 @@ paths:
           description: 'post updated'
           schema:
             $ref: '#/definitions/post'
+        400:
+          description: 'Bad request - validation error or invalid data'
+          schema:
+            $ref: '#/definitions/error'
+        404:
+          description: 'Post or author not found'
+          schema:
+            $ref: '#/definitions/error'
+        500:
+          description: 'Internal server error'
+          schema:
+            $ref: '#/definitions/error'
     delete:
       tags:
         - 'Posts'
       x-swagger-router-controller: app
-      summary: delete post
+      summary: Delete post
+      description: |
+        Permanently deletes a post from the system by its ID.
+        This action cannot be undone.
+        Returns 404 if the post is not found.
       operationId: deletePostHandler
       parameters:
         - name: id
@@ -325,3 +549,15 @@ paths:
       responses:
         204:
           description: 'post deleted'
+        400:
+          description: 'Bad request - invalid post ID'
+          schema:
+            $ref: '#/definitions/error'
+        404:
+          description: 'Post not found'
+          schema:
+            $ref: '#/definitions/error'
+        500:
+          description: 'Internal server error'
+          schema:
+            $ref: '#/definitions/error'
