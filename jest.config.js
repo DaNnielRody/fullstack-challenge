@@ -35,10 +35,10 @@ export default {
     '^#handlers/(.*)$': '<rootDir>/src/modules/handlers/$1',
     '^#services/(.*)$': '<rootDir>/src/modules/services/$1',
     '^#repositories/(.*)$': '<rootDir>/src/modules/repositories/$1',
-    '^#common/handlers/(.*)$': '<rootDir>/src/modules/common/handlers/$1',
     '^#common/services/(.*)$': '<rootDir>/src/modules/common/services/$1',
     '^#common/errors/(.*)$': '<rootDir>/src/modules/common/errors/$1',
     '^#common/validations/(.*)$': '<rootDir>/src/modules/common/validations/$1',
+    '^#common/infrastructure/(.*)$': '<rootDir>/src/modules/common/infrastructure/$1',
     '^#routes/(.*)$': '<rootDir>/src/modules/routes/$1'
   }
 };

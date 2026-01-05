@@ -9,7 +9,6 @@
     "#handlers/*": "./src/modules/handlers/*",
     "#services/*": "./src/modules/services/*",
     "#repositories/*": "./src/modules/repositories/*",
-    "#common/handlers/*": "./src/modules/common/handlers/*",
     "#common/services/*": "./src/modules/common/services/*",
     "#common/errors/*": "./src/modules/common/errors/*",
     "#common/validations/*": "./src/modules/common/validations/*",
