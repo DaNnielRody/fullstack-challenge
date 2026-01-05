@@ -8,29 +8,35 @@ import {
   UserValidationError,
   handleServiceError,
 } from '#common/errors/index.js';
+import {
+  validatePositiveIntegerAndThrow,
+  validateArrayHasOneAndThrow,
+} from '#common/validations/index.js';
 
 const deleteUserService = async ({ user_id }) => {
   try {
-    if (!Number.isInteger(user_id) || user_id <= 0) {
-      const error = new UserValidationError(
-        'Invalid user id: must be a positive integer',
-        { user_id }
-      );
-      logError('DELETE', 'USER', error, { user_id });
-      throw error;
-    }
+    validatePositiveIntegerAndThrow(
+      user_id,
+      'user_id',
+      UserValidationError,
+      logError,
+      'DELETE',
+      'USER'
+    );
 
     const { users = [] } = await getUserRepositories({
       user_id,
     });
 
-    const has_user = Array.isArray(users) && users.length === 1;
-
-    if (!has_user) {
-      const error = new UserNotFoundError(user_id);
-      logError('DELETE', 'USER', error, { user_id });
-      throw error;
-    }
+    validateArrayHasOneAndThrow(
+      users,
+      'user',
+      UserNotFoundError,
+      logError,
+      'DELETE',
+      'USER',
+      { user_id }
+    );
 
     const [user_to_delete] = users;
 

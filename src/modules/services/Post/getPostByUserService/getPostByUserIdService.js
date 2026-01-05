@@ -6,29 +6,35 @@ import {
   PostValidationError,
   handleServiceError,
 } from '#common/errors/index.js';
+import {
+  validatePositiveIntegerAndThrow,
+  validateArrayExistsAndThrow,
+} from '#common/validations/index.js';
 
 const getPostByUserIdService = async ({ user_id }) => {
   try {
-    if (!Number.isInteger(user_id) || user_id <= 0) {
-      const error = new PostValidationError(
-        'Invalid user_id: must be a positive integer',
-        { user_id }
-      );
-      logError('LIST', 'POST', error, { user_id });
-      throw error;
-    }
+    validatePositiveIntegerAndThrow(
+      user_id,
+      'user_id',
+      PostValidationError,
+      logError,
+      'LIST',
+      'POST'
+    );
 
     const { user } = await getUserByIdService({
       user_id,
     });
 
-    const has_author = Array.isArray(user) && user.length > 0;
-
-    if (has_author === false) {
-      const error = new AuthorNotFoundError(user_id);
-      logError('LIST', 'POST', error, { user_id });
-      throw error;
-    }
+    validateArrayExistsAndThrow(
+      user,
+      'author',
+      AuthorNotFoundError,
+      logError,
+      'LIST',
+      'POST',
+      { user_id }
+    );
 
     const { posts = [] } = await getPostByUserIdRepositories({
       user_id,

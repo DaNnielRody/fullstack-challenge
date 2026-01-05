@@ -8,38 +8,56 @@ import {
   PostValidationError,
   handleServiceError,
 } from '#common/errors/index.js';
+import {
+  validateStringAndThrow,
+  validatePositiveIntegerAndThrow,
+  validateArrayHasOneAndThrow,
+} from '#common/validations/index.js';
 
 const updatePostService = async ({ post_id, author_id, post_text }) => {
   try {
-    if (!Number.isInteger(post_id) || post_id <= 0) {
-      const error = new PostValidationError(
-        'Invalid post id: must be a positive integer',
-        { post_id }
-      );
-      logError('UPDATE', 'POST', error, { post_id });
-      throw error;
-    }
+    validatePositiveIntegerAndThrow(
+      post_id,
+      'post_id',
+      PostValidationError,
+      logError,
+      'UPDATE',
+      'POST'
+    );
 
-    if (!Number.isInteger(author_id) || author_id <= 0) {
-      const error = new PostValidationError(
-        'Invalid author_id: must be a positive integer',
-        { author_id }
-      );
-      logError('UPDATE', 'POST', error, { post_id, author_id });
-      throw error;
-    }
+    validatePositiveIntegerAndThrow(
+      author_id,
+      'author_id',
+      PostValidationError,
+      logError,
+      'UPDATE',
+      'POST',
+      { post_id }
+    );
+
+    validateStringAndThrow(
+      post_text,
+      'post_text',
+      PostValidationError,
+      logError,
+      'UPDATE',
+      'POST',
+      { post_id, author_id }
+    );
 
     const { posts = [] } = await getPostByPostIdRepositories({
       post_id,
     });
 
-    const has_post = Array.isArray(posts) && posts.length === 1;
-
-    if (!has_post) {
-      const error = new PostNotFoundError(post_id);
-      logError('UPDATE', 'POST', error, { post_id });
-      throw error;
-    }
+    validateArrayHasOneAndThrow(
+      posts,
+      'post',
+      PostNotFoundError,
+      logError,
+      'UPDATE',
+      'POST',
+      { post_id }
+    );
 
     await updatePostRepositories({
       post_id,

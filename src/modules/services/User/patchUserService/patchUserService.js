@@ -11,6 +11,12 @@ import {
   UserEmailAlreadyExistsError,
   handleServiceError,
 } from '#common/errors/index.js';
+import {
+  validateStringAndThrow,
+  validatePositiveIntegerAndThrow,
+  validateArrayHasOneAndThrow,
+  validateArrayEmptyAndThrow,
+} from '#common/validations/index.js';
 
 const salt = bcrypt.genSaltSync(10);
 
@@ -21,39 +27,55 @@ const patchUserService = async ({
   full_name,
 }) => {
   try {
-    if (!Number.isInteger(user_id) || user_id <= 0) {
-      const error = new UserValidationError(
-        'Invalid user id: must be a positive integer',
-        { user_id }
-      );
-      logError('PATCH', 'USER', error, { user_id });
-      throw error;
-    }
+    validatePositiveIntegerAndThrow(
+      user_id,
+      'user_id',
+      UserValidationError,
+      logError,
+      'PATCH',
+      'USER'
+    );
 
     const { users = [] } = await getUserRepositories({
       user_id,
     });
 
-    const has_user = Array.isArray(users) && users.length === 1;
-
-    if (!has_user) {
-      const error = new UserNotFoundError(user_id);
-      logError('PATCH', 'USER', error, { user_id });
-      throw error;
-    }
+    validateArrayHasOneAndThrow(
+      users,
+      'user',
+      UserNotFoundError,
+      logError,
+      'PATCH',
+      'USER',
+      { user_id }
+    );
 
     const currentUser = users[0];
 
-    if (user_email && user_email !== currentUser.user_email) {
+    if (user_email !== undefined && user_email !== currentUser.user_email) {
+      validateStringAndThrow(
+        user_email,
+        'user_email',
+        UserValidationError,
+        logError,
+        'PATCH',
+        'USER',
+        { user_id }
+      );
+
       const { users: existingUsers = [] } = await getUserByEmailRepositories({
         user_email,
       });
 
-      if (existingUsers.length > 0) {
-        const error = new UserEmailAlreadyExistsError(user_email);
-        logError('PATCH', 'USER', error, { user_id, user_email });
-        throw error;
-      }
+      validateArrayEmptyAndThrow(
+        existingUsers,
+        'user_email',
+        UserEmailAlreadyExistsError,
+        logError,
+        'PATCH',
+        'USER',
+        { user_id, user_email }
+      );
     }
 
     const hashedPassword = user_password
