@@ -6,13 +6,6 @@ const mockValidateStringAndThrow = jest.fn();
 const mockValidateEmail = jest.fn();
 const mockValidatePassword = jest.fn();
 const mockLogError = jest.fn();
-const mockHttpErrorHandler = jest.fn(({ res, error }) => {
-  return res.status(error.statusCode || 500).json({
-    error: error.message,
-    code: error.code,
-    details: error.details,
-  });
-});
 
 jest.unstable_mockModule('#services/index.js', () => ({
   createUserService: mockCreateUserService,
@@ -26,10 +19,6 @@ jest.unstable_mockModule('#common/validations/index.js', () => ({
 
 jest.unstable_mockModule('#common/services/logger/logger.js', () => ({
   logError: mockLogError,
-}));
-
-jest.unstable_mockModule('#common/handlers/index.js', () => ({
-  httpErrorHandler: mockHttpErrorHandler,
 }));
 
 const { createUserHandler } = await import('#handlers/User/createUser.js');
@@ -82,12 +71,17 @@ describe('createUserHandler', () => {
 
     req = {
       body: {},
+      headers: {},
+      method: 'POST',
+      path: '/api/users',
+      ip: '127.0.0.1',
     };
 
     res = {
       status: jest.fn().mockReturnThis(),
       send: jest.fn().mockReturnThis(),
       json: jest.fn().mockReturnThis(),
+      end: jest.fn().mockReturnThis(),
     };
 
     next = jest.fn();
@@ -166,11 +160,12 @@ describe('createUserHandler', () => {
         validationError,
         { user_email: '' }
       );
-      expect(mockHttpErrorHandler).toHaveBeenCalledWith({
-        req,
-        res,
-        error: validationError,
+      expect(res.status).toHaveBeenCalledWith(validationError.statusCode);
+      expect(res.json).toHaveBeenCalledWith({
+        code: validationError.code,
+        message: validationError.message,
       });
+      expect(res.end).toHaveBeenCalled();
       expect(mockValidateEmail).not.toHaveBeenCalled();
       expect(mockCreateUserService).not.toHaveBeenCalled();
     });
@@ -214,11 +209,12 @@ describe('createUserHandler', () => {
         validationError,
         { user_email: 'usuario@gmail.com', user_password: '' }
       );
-      expect(mockHttpErrorHandler).toHaveBeenCalledWith({
-        req,
-        res,
-        error: validationError,
+      expect(res.status).toHaveBeenCalledWith(validationError.statusCode);
+      expect(res.json).toHaveBeenCalledWith({
+        code: validationError.code,
+        message: validationError.message,
       });
+      expect(res.end).toHaveBeenCalled();
       expect(mockValidatePassword).not.toHaveBeenCalled();
       expect(mockCreateUserService).not.toHaveBeenCalled();
     });
@@ -247,11 +243,9 @@ describe('createUserHandler', () => {
         expect.any(UserValidationError),
         { user_email: invalidEmail }
       );
-      expect(mockHttpErrorHandler).toHaveBeenCalledWith({
-        req,
-        res,
-        error: expect.any(UserValidationError),
-      });
+      expect(res.status).toHaveBeenCalledWith(expect.any(Number));
+      expect(res.json).toHaveBeenCalled();
+      expect(res.end).toHaveBeenCalled();
       expect(mockCreateUserService).not.toHaveBeenCalled();
     });
 
@@ -277,7 +271,9 @@ describe('createUserHandler', () => {
         expect.any(UserValidationError),
         { user_email: invalidEmail }
       );
-      expect(mockHttpErrorHandler).toHaveBeenCalled();
+      expect(res.status).toHaveBeenCalledWith(expect.any(Number));
+      expect(res.json).toHaveBeenCalled();
+      expect(res.end).toHaveBeenCalled();
       expect(mockCreateUserService).not.toHaveBeenCalled();
     });
   });
@@ -305,7 +301,9 @@ describe('createUserHandler', () => {
         expect.any(UserValidationError),
         { user_email: validEmail }
       );
-      expect(mockHttpErrorHandler).toHaveBeenCalled();
+      expect(res.status).toHaveBeenCalledWith(expect.any(Number));
+      expect(res.json).toHaveBeenCalled();
+      expect(res.end).toHaveBeenCalled();
       expect(mockCreateUserService).not.toHaveBeenCalled();
     });
 
@@ -331,7 +329,9 @@ describe('createUserHandler', () => {
         expect.any(UserValidationError),
         { user_email: validEmail }
       );
-      expect(mockHttpErrorHandler).toHaveBeenCalled();
+      expect(res.status).toHaveBeenCalledWith(expect.any(Number));
+      expect(res.json).toHaveBeenCalled();
+      expect(res.end).toHaveBeenCalled();
       expect(mockCreateUserService).not.toHaveBeenCalled();
     });
 
@@ -357,7 +357,9 @@ describe('createUserHandler', () => {
         expect.any(UserValidationError),
         { user_email: validEmail }
       );
-      expect(mockHttpErrorHandler).toHaveBeenCalled();
+      expect(res.status).toHaveBeenCalledWith(expect.any(Number));
+      expect(res.json).toHaveBeenCalled();
+      expect(res.end).toHaveBeenCalled();
       expect(mockCreateUserService).not.toHaveBeenCalled();
     });
   });
@@ -386,13 +388,13 @@ describe('createUserHandler', () => {
         user_password: validPassword,
         full_name: fullName,
       });
-      expect(mockHttpErrorHandler).toHaveBeenCalledWith({
-        req,
-        res,
-        error: serviceError,
+      expect(res.status).toHaveBeenCalledWith(serviceError.statusCode);
+      expect(res.json).toHaveBeenCalledWith({
+        code: serviceError.code,
+        message: serviceError.message,
       });
-      expect(res.status).not.toHaveBeenCalledWith(httpStatusCodes.CREATED);
-      expect(res.send).not.toHaveBeenCalled();
+      expect(res.end).toHaveBeenCalled();
+      
     });
   });
 });

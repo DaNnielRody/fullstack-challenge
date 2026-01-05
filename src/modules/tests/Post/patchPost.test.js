@@ -5,13 +5,6 @@ const mockPatchPostService = jest.fn();
 const mockValidateStringAndThrow = jest.fn();
 const mockValidatePositiveIntegerAndThrow = jest.fn();
 const mockLogError = jest.fn();
-const mockHttpErrorHandler = jest.fn(({ res, error }) => {
-  return res.status(error.statusCode || 500).json({
-    error: error.message,
-    code: error.code,
-    details: error.details,
-  });
-});
 
 jest.unstable_mockModule('#services/index.js', () => ({
   patchPostService: mockPatchPostService,
@@ -24,10 +17,6 @@ jest.unstable_mockModule('#common/validations/index.js', () => ({
 
 jest.unstable_mockModule('#common/services/logger/logger.js', () => ({
   logError: mockLogError,
-}));
-
-jest.unstable_mockModule('#common/handlers/index.js', () => ({
-  httpErrorHandler: mockHttpErrorHandler,
 }));
 
 const { patchPostHandler } = await import('#handlers/Posts/patchPost.js');
@@ -57,12 +46,17 @@ describe('patchPostHandler', () => {
     req = {
       params: {},
       body: {},
+      headers: {},
+      method: 'PATCH',
+      path: '/api/posts/:id',
+      ip: '127.0.0.1',
     };
 
     res = {
       status: jest.fn().mockReturnThis(),
       send: jest.fn().mockReturnThis(),
       json: jest.fn().mockReturnThis(),
+      end: jest.fn().mockReturnThis(),
     };
 
     next = jest.fn();
@@ -214,11 +208,12 @@ describe('patchPostHandler', () => {
         'PATCH',
         'POST'
       );
-      expect(mockHttpErrorHandler).toHaveBeenCalledWith({
-        req,
-        res,
-        error: validationError,
+      expect(res.status).toHaveBeenCalledWith(validationError.statusCode);
+      expect(res.json).toHaveBeenCalledWith({
+        code: validationError.code,
+        message: validationError.message,
       });
+      expect(res.end).toHaveBeenCalled();
       expect(mockPatchPostService).not.toHaveBeenCalled();
     });
   });
@@ -240,11 +235,9 @@ describe('patchPostHandler', () => {
         expect.any(PostValidationError),
         { post_id: postId }
       );
-      expect(mockHttpErrorHandler).toHaveBeenCalledWith({
-        req,
-        res,
-        error: expect.any(PostValidationError),
-      });
+      expect(res.status).toHaveBeenCalledWith(expect.any(Number));
+      expect(res.json).toHaveBeenCalled();
+      expect(res.end).toHaveBeenCalled();
       expect(mockPatchPostService).not.toHaveBeenCalled();
     });
 
@@ -266,7 +259,9 @@ describe('patchPostHandler', () => {
         expect.any(PostValidationError),
         { post_id: postId }
       );
-      expect(mockHttpErrorHandler).toHaveBeenCalled();
+      expect(res.status).toHaveBeenCalledWith(expect.any(Number));
+      expect(res.json).toHaveBeenCalled();
+      expect(res.end).toHaveBeenCalled();
       expect(mockPatchPostService).not.toHaveBeenCalled();
     });
 
@@ -288,7 +283,9 @@ describe('patchPostHandler', () => {
         expect.any(PostValidationError),
         { post_id: postId }
       );
-      expect(mockHttpErrorHandler).toHaveBeenCalled();
+      expect(res.status).toHaveBeenCalledWith(expect.any(Number));
+      expect(res.json).toHaveBeenCalled();
+      expect(res.end).toHaveBeenCalled();
       expect(mockPatchPostService).not.toHaveBeenCalled();
     });
   });
@@ -312,11 +309,9 @@ describe('patchPostHandler', () => {
         expect.any(PostValidationError),
         { post_id: postId }
       );
-      expect(mockHttpErrorHandler).toHaveBeenCalledWith({
-        req,
-        res,
-        error: expect.any(PostValidationError),
-      });
+      expect(res.status).toHaveBeenCalledWith(expect.any(Number));
+      expect(res.json).toHaveBeenCalled();
+      expect(res.end).toHaveBeenCalled();
       expect(mockPatchPostService).not.toHaveBeenCalled();
     });
 
@@ -347,7 +342,9 @@ describe('patchPostHandler', () => {
       await patchPostHandler(req, res, next);
 
       expect(mockValidatePositiveIntegerAndThrow).toHaveBeenCalledTimes(2);
-      expect(mockHttpErrorHandler).toHaveBeenCalled();
+      expect(res.status).toHaveBeenCalledWith(expect.any(Number));
+      expect(res.json).toHaveBeenCalled();
+      expect(res.end).toHaveBeenCalled();
       expect(mockPatchPostService).not.toHaveBeenCalled();
     });
   });
@@ -371,7 +368,9 @@ describe('patchPostHandler', () => {
         expect.any(PostValidationError),
         { post_id: postId }
       );
-      expect(mockHttpErrorHandler).toHaveBeenCalled();
+      expect(res.status).toHaveBeenCalledWith(expect.any(Number));
+      expect(res.json).toHaveBeenCalled();
+      expect(res.end).toHaveBeenCalled();
       expect(mockValidateStringAndThrow).not.toHaveBeenCalled();
       expect(mockPatchPostService).not.toHaveBeenCalled();
     });
@@ -402,13 +401,13 @@ describe('patchPostHandler', () => {
         author_id: undefined,
         post_text: newPostText,
       });
-      expect(mockHttpErrorHandler).toHaveBeenCalledWith({
-        req,
-        res,
-        error: notFoundError,
+      expect(res.status).toHaveBeenCalledWith(notFoundError.statusCode);
+      expect(res.json).toHaveBeenCalledWith({
+        code: notFoundError.code,
+        message: notFoundError.message,
       });
-      expect(res.status).not.toHaveBeenCalledWith(httpStatusCodes.OK);
-      expect(res.send).not.toHaveBeenCalled();
+      expect(res.end).toHaveBeenCalled();
+      
     });
 
     it('deve retornar erro quando service lança exceção genérica', async () => {
@@ -432,13 +431,13 @@ describe('patchPostHandler', () => {
         author_id: newAuthorId,
         post_text: undefined,
       });
-      expect(mockHttpErrorHandler).toHaveBeenCalledWith({
-        req,
-        res,
-        error: serviceError,
+      expect(res.status).toHaveBeenCalledWith(serviceError.statusCode);
+      expect(res.json).toHaveBeenCalledWith({
+        code: serviceError.code,
+        message: serviceError.message,
       });
-      expect(res.status).not.toHaveBeenCalledWith(httpStatusCodes.OK);
-      expect(res.send).not.toHaveBeenCalled();
+      expect(res.end).toHaveBeenCalled();
+      
     });
   });
 });

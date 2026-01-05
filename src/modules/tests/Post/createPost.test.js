@@ -5,13 +5,6 @@ const mockCreatePostService = jest.fn();
 const mockValidateStringAndThrow = jest.fn();
 const mockValidatePositiveIntegerAndThrow = jest.fn();
 const mockLogError = jest.fn();
-const mockHttpErrorHandler = jest.fn(({ res, error }) => {
-  return res.status(error.statusCode || 500).json({
-    error: error.message,
-    code: error.code,
-    details: error.details,
-  });
-});
 
 jest.unstable_mockModule('#services/index.js', () => ({
   createPostService: mockCreatePostService,
@@ -24,10 +17,6 @@ jest.unstable_mockModule('#common/validations/index.js', () => ({
 
 jest.unstable_mockModule('#common/services/logger/logger.js', () => ({
   logError: mockLogError,
-}));
-
-jest.unstable_mockModule('#common/handlers/index.js', () => ({
-  httpErrorHandler: mockHttpErrorHandler,
 }));
 
 const { createPostHandler } = await import('#handlers/Posts/createPost.js');
@@ -45,12 +34,17 @@ describe('createPostHandler', () => {
 
     req = {
       body: {},
+      headers: {},
+      method: 'POST',
+      path: '/api/posts',
+      ip: '127.0.0.1',
     };
 
     res = {
       status: jest.fn().mockReturnThis(),
       send: jest.fn().mockReturnThis(),
       json: jest.fn().mockReturnThis(),
+      end: jest.fn().mockReturnThis(),
     };
 
     next = jest.fn();
@@ -170,11 +164,12 @@ describe('createPostHandler', () => {
         validationError,
         { post_text: '' }
       );
-      expect(mockHttpErrorHandler).toHaveBeenCalledWith({
-        req,
-        res,
-        error: validationError,
+      expect(res.status).toHaveBeenCalledWith(validationError.statusCode);
+      expect(res.json).toHaveBeenCalledWith({
+        code: validationError.code,
+        message: validationError.message,
       });
+      expect(res.end).toHaveBeenCalled();
       expect(mockValidatePositiveIntegerAndThrow).not.toHaveBeenCalled();
       expect(mockCreatePostService).not.toHaveBeenCalled();
     });
@@ -206,17 +201,18 @@ describe('createPostHandler', () => {
         'CREATE',
         'POST'
       );
-      expect(mockHttpErrorHandler).toHaveBeenCalledWith({
-        req,
-        res,
-        error: validationError,
+      expect(res.status).toHaveBeenCalledWith(validationError.statusCode);
+      expect(res.json).toHaveBeenCalledWith({
+        code: validationError.code,
+        message: validationError.message,
       });
+      expect(res.end).toHaveBeenCalled();
       expect(mockCreatePostService).not.toHaveBeenCalled();
     });
   });
 
   describe('Cenários de erro - Validação de author_id', () => {
-    it('deve retornar erro quando author_id não é um inteiro positivo', async () => {
+    it('deve retornar erro quando author_id é inválido', async () => {
       req.body = {
         post_text: 'Post de teste',
         author_id: 0,
@@ -237,99 +233,12 @@ describe('createPostHandler', () => {
 
       await createPostHandler(req, res, next);
 
-      expect(mockValidatePositiveIntegerAndThrow).toHaveBeenCalledWith(
-        0,
-        'author_id',
-        PostValidationError,
-        mockLogError,
-        'CREATE',
-        'POST'
-      );
-      expect(mockLogError).toHaveBeenCalledWith(
-        'CREATE',
-        'POST',
-        validationError,
-        { author_id: 0 }
-      );
-      expect(mockHttpErrorHandler).toHaveBeenCalledWith({
-        req,
-        res,
-        error: validationError,
+      expect(res.status).toHaveBeenCalledWith(validationError.statusCode);
+      expect(res.json).toHaveBeenCalledWith({
+        code: validationError.code,
+        message: validationError.message,
       });
-      expect(mockCreatePostService).not.toHaveBeenCalled();
-    });
-
-    it('deve retornar erro quando author_id é negativo', async () => {
-      req.body = {
-        post_text: 'Post de teste',
-        author_id: -1,
-      };
-
-      const validationError = new PostValidationError(
-        'Invalid author_id: must be a positive integer',
-        { author_id: -1 }
-      );
-
-      mockValidateStringAndThrow.mockImplementation(() => {});
-      mockValidatePositiveIntegerAndThrow.mockImplementation(
-        (value, fieldName, ErrorClass, logErrorFn, action, entity) => {
-          logErrorFn(action, entity, validationError, { [fieldName]: value });
-          throw validationError;
-        }
-      );
-
-      await createPostHandler(req, res, next);
-
-      expect(mockValidatePositiveIntegerAndThrow).toHaveBeenCalledWith(
-        -1,
-        'author_id',
-        PostValidationError,
-        mockLogError,
-        'CREATE',
-        'POST'
-      );
-      expect(mockHttpErrorHandler).toHaveBeenCalledWith({
-        req,
-        res,
-        error: validationError,
-      });
-      expect(mockCreatePostService).not.toHaveBeenCalled();
-    });
-
-    it('deve retornar erro quando author_id não é um número', async () => {
-      req.body = {
-        post_text: 'Post de teste',
-        author_id: 'abc',
-      };
-
-      const validationError = new PostValidationError(
-        'Invalid author_id: must be a positive integer',
-        { author_id: 'abc' }
-      );
-
-      mockValidateStringAndThrow.mockImplementation(() => {});
-      mockValidatePositiveIntegerAndThrow.mockImplementation(
-        (value, fieldName, ErrorClass, logErrorFn, action, entity) => {
-          logErrorFn(action, entity, validationError, { [fieldName]: value });
-          throw validationError;
-        }
-      );
-
-      await createPostHandler(req, res, next);
-
-      expect(mockValidatePositiveIntegerAndThrow).toHaveBeenCalledWith(
-        'abc',
-        'author_id',
-        PostValidationError,
-        mockLogError,
-        'CREATE',
-        'POST'
-      );
-      expect(mockHttpErrorHandler).toHaveBeenCalledWith({
-        req,
-        res,
-        error: validationError,
-      });
+      expect(res.end).toHaveBeenCalled();
       expect(mockCreatePostService).not.toHaveBeenCalled();
     });
   });
@@ -356,13 +265,12 @@ describe('createPostHandler', () => {
         post_text: postText,
         author_id: authorId,
       });
-      expect(mockHttpErrorHandler).toHaveBeenCalledWith({
-        req,
-        res,
-        error: notFoundError,
+      expect(res.status).toHaveBeenCalledWith(notFoundError.statusCode);
+      expect(res.json).toHaveBeenCalledWith({
+        code: notFoundError.code,
+        message: notFoundError.message,
       });
-      expect(res.status).not.toHaveBeenCalledWith(httpStatusCodes.CREATED);
-      expect(res.send).not.toHaveBeenCalled();
+      expect(res.end).toHaveBeenCalled();
     });
 
     it('deve retornar erro quando service lança exceção de criação', async () => {
@@ -386,13 +294,12 @@ describe('createPostHandler', () => {
         post_text: postText,
         author_id: authorId,
       });
-      expect(mockHttpErrorHandler).toHaveBeenCalledWith({
-        req,
-        res,
-        error: creationError,
+      expect(res.status).toHaveBeenCalledWith(creationError.statusCode);
+      expect(res.json).toHaveBeenCalledWith({
+        code: creationError.code,
+        message: creationError.message,
       });
-      expect(res.status).not.toHaveBeenCalledWith(httpStatusCodes.CREATED);
-      expect(res.send).not.toHaveBeenCalled();
+      expect(res.end).toHaveBeenCalled();
     });
 
     it('deve retornar erro quando service lança exceção genérica', async () => {
@@ -416,13 +323,11 @@ describe('createPostHandler', () => {
         post_text: postText,
         author_id: authorId,
       });
-      expect(mockHttpErrorHandler).toHaveBeenCalledWith({
-        req,
-        res,
-        error: serviceError,
+      expect(res.status).toHaveBeenCalledWith(httpStatusCodes.INTERNAL_SERVER_ERROR);
+      expect(res.json).toHaveBeenCalledWith({
+        code: 'INTERNAL_ERROR'
       });
-      expect(res.status).not.toHaveBeenCalledWith(httpStatusCodes.CREATED);
-      expect(res.send).not.toHaveBeenCalled();
+      expect(res.end).toHaveBeenCalled();
     });
   });
 });

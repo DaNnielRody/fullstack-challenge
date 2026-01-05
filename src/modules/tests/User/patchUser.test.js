@@ -7,13 +7,6 @@ const mockValidatePositiveIntegerAndThrow = jest.fn();
 const mockValidateEmail = jest.fn();
 const mockValidatePassword = jest.fn();
 const mockLogError = jest.fn();
-const mockHttpErrorHandler = jest.fn(({ res, error }) => {
-  return res.status(error.statusCode || 500).json({
-    error: error.message,
-    code: error.code,
-    details: error.details,
-  });
-});
 
 jest.unstable_mockModule('#services/index.js', () => ({
   patchUserService: mockPatchUserService,
@@ -28,10 +21,6 @@ jest.unstable_mockModule('#common/validations/index.js', () => ({
 
 jest.unstable_mockModule('#common/services/logger/logger.js', () => ({
   logError: mockLogError,
-}));
-
-jest.unstable_mockModule('#common/handlers/index.js', () => ({
-  httpErrorHandler: mockHttpErrorHandler,
 }));
 
 const { patchUserHandler } = await import('#handlers/User/patchUser.js');
@@ -90,12 +79,17 @@ describe('patchUserHandler', () => {
     req = {
       params: {},
       body: {},
+      headers: {},
+      method: 'PATCH',
+      path: '/api/users/:id',
+      ip: '127.0.0.1',
     };
 
     res = {
       status: jest.fn().mockReturnThis(),
       send: jest.fn().mockReturnThis(),
       json: jest.fn().mockReturnThis(),
+      end: jest.fn().mockReturnThis(),
     };
 
     next = jest.fn();
@@ -299,11 +293,12 @@ describe('patchUserHandler', () => {
         'PATCH',
         'USER'
       );
-      expect(mockHttpErrorHandler).toHaveBeenCalledWith({
-        req,
-        res,
-        error: validationError,
+      expect(res.status).toHaveBeenCalledWith(validationError.statusCode);
+      expect(res.json).toHaveBeenCalledWith({
+        code: validationError.code,
+        message: validationError.message,
       });
+      expect(res.end).toHaveBeenCalled();
       expect(mockPatchUserService).not.toHaveBeenCalled();
     });
   });
@@ -325,11 +320,9 @@ describe('patchUserHandler', () => {
         expect.any(UserValidationError),
         { user_id: userId }
       );
-      expect(mockHttpErrorHandler).toHaveBeenCalledWith({
-        req,
-        res,
-        error: expect.any(UserValidationError),
-      });
+      expect(res.status).toHaveBeenCalledWith(expect.any(Number));
+      expect(res.json).toHaveBeenCalled();
+      expect(res.end).toHaveBeenCalled();
       expect(mockPatchUserService).not.toHaveBeenCalled();
     });
 
@@ -351,11 +344,9 @@ describe('patchUserHandler', () => {
         expect.any(UserValidationError),
         { user_id: userId }
       );
-      expect(mockHttpErrorHandler).toHaveBeenCalledWith({
-        req,
-        res,
-        error: expect.any(UserValidationError),
-      });
+      expect(res.status).toHaveBeenCalledWith(expect.any(Number));
+      expect(res.json).toHaveBeenCalled();
+      expect(res.end).toHaveBeenCalled();
       expect(mockValidateStringAndThrow).not.toHaveBeenCalled();
       expect(mockValidateEmail).not.toHaveBeenCalled();
       expect(mockPatchUserService).not.toHaveBeenCalled();
@@ -379,11 +370,9 @@ describe('patchUserHandler', () => {
         expect.any(UserValidationError),
         { user_id: userId }
       );
-      expect(mockHttpErrorHandler).toHaveBeenCalledWith({
-        req,
-        res,
-        error: expect.any(UserValidationError),
-      });
+      expect(res.status).toHaveBeenCalledWith(expect.any(Number));
+      expect(res.json).toHaveBeenCalled();
+      expect(res.end).toHaveBeenCalled();
       expect(mockValidateStringAndThrow).not.toHaveBeenCalled();
       expect(mockValidatePassword).not.toHaveBeenCalled();
       expect(mockPatchUserService).not.toHaveBeenCalled();
@@ -411,11 +400,9 @@ describe('patchUserHandler', () => {
         expect.any(UserValidationError),
         { user_id: userId, user_email: invalidEmail }
       );
-      expect(mockHttpErrorHandler).toHaveBeenCalledWith({
-        req,
-        res,
-        error: expect.any(UserValidationError),
-      });
+      expect(res.status).toHaveBeenCalledWith(expect.any(Number));
+      expect(res.json).toHaveBeenCalled();
+      expect(res.end).toHaveBeenCalled();
       expect(mockPatchUserService).not.toHaveBeenCalled();
     });
 
@@ -433,7 +420,9 @@ describe('patchUserHandler', () => {
       await patchUserHandler(req, res, next);
 
       expect(mockValidateEmail).toHaveBeenCalledWith(invalidEmail);
-      expect(mockHttpErrorHandler).toHaveBeenCalled();
+      expect(res.status).toHaveBeenCalledWith(expect.any(Number));
+      expect(res.json).toHaveBeenCalled();
+      expect(res.end).toHaveBeenCalled();
       expect(mockPatchUserService).not.toHaveBeenCalled();
     });
   });
@@ -461,7 +450,9 @@ describe('patchUserHandler', () => {
         expect.any(UserValidationError),
         { user_id: userId }
       );
-      expect(mockHttpErrorHandler).toHaveBeenCalled();
+      expect(res.status).toHaveBeenCalledWith(expect.any(Number));
+      expect(res.json).toHaveBeenCalled();
+      expect(res.end).toHaveBeenCalled();
       expect(mockPatchUserService).not.toHaveBeenCalled();
     });
 
@@ -481,7 +472,9 @@ describe('patchUserHandler', () => {
       await patchUserHandler(req, res, next);
 
       expect(mockValidatePassword).toHaveBeenCalledWith(invalidPassword);
-      expect(mockHttpErrorHandler).toHaveBeenCalled();
+      expect(res.status).toHaveBeenCalledWith(expect.any(Number));
+      expect(res.json).toHaveBeenCalled();
+      expect(res.end).toHaveBeenCalled();
       expect(mockPatchUserService).not.toHaveBeenCalled();
     });
 
@@ -501,7 +494,9 @@ describe('patchUserHandler', () => {
       await patchUserHandler(req, res, next);
 
       expect(mockValidatePassword).toHaveBeenCalledWith(invalidPassword);
-      expect(mockHttpErrorHandler).toHaveBeenCalled();
+      expect(res.status).toHaveBeenCalledWith(expect.any(Number));
+      expect(res.json).toHaveBeenCalled();
+      expect(res.end).toHaveBeenCalled();
       expect(mockPatchUserService).not.toHaveBeenCalled();
     });
   });
@@ -529,13 +524,13 @@ describe('patchUserHandler', () => {
         user_password: undefined,
         full_name: undefined,
       });
-      expect(mockHttpErrorHandler).toHaveBeenCalledWith({
-        req,
-        res,
-        error: notFoundError,
+      expect(res.status).toHaveBeenCalledWith(notFoundError.statusCode);
+      expect(res.json).toHaveBeenCalledWith({
+        code: notFoundError.code,
+        message: notFoundError.message,
       });
-      expect(res.status).not.toHaveBeenCalledWith(httpStatusCodes.OK);
-      expect(res.send).not.toHaveBeenCalled();
+      expect(res.end).toHaveBeenCalled();
+      
     });
 
     it('deve retornar erro quando email já existe', async () => {
@@ -560,13 +555,13 @@ describe('patchUserHandler', () => {
         user_password: undefined,
         full_name: undefined,
       });
-      expect(mockHttpErrorHandler).toHaveBeenCalledWith({
-        req,
-        res,
-        error: emailExistsError,
+      expect(res.status).toHaveBeenCalledWith(emailExistsError.statusCode);
+      expect(res.json).toHaveBeenCalledWith({
+        code: emailExistsError.code,
+        message: emailExistsError.message,
       });
-      expect(res.status).not.toHaveBeenCalledWith(httpStatusCodes.OK);
-      expect(res.send).not.toHaveBeenCalled();
+      expect(res.end).toHaveBeenCalled();
+      
     });
 
     it('deve retornar erro quando service lança exceção genérica', async () => {
@@ -591,13 +586,13 @@ describe('patchUserHandler', () => {
         user_password: undefined,
         full_name: newFullName,
       });
-      expect(mockHttpErrorHandler).toHaveBeenCalledWith({
-        req,
-        res,
-        error: serviceError,
+      expect(res.status).toHaveBeenCalledWith(serviceError.statusCode);
+      expect(res.json).toHaveBeenCalledWith({
+        code: serviceError.code,
+        message: serviceError.message,
       });
-      expect(res.status).not.toHaveBeenCalledWith(httpStatusCodes.OK);
-      expect(res.send).not.toHaveBeenCalled();
+      expect(res.end).toHaveBeenCalled();
+      
     });
   });
 });

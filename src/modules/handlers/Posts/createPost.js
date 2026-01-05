@@ -1,5 +1,5 @@
 import httpStatusCodes from 'http-status-codes';
-import { httpErrorHandler } from '#common/handlers/index.js';
+import { httpErrorHandler } from '#common/errors/index.js';
 import { createPostService } from '#services/index.js';
 import { PostValidationError } from '#common/errors/index.js';
 import { logError } from '#common/services/logger/logger.js';

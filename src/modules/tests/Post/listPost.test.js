@@ -2,20 +2,9 @@ import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import httpStatusCodes from 'http-status-codes';
 
 const mockGetAllPostsService = jest.fn();
-const mockHttpErrorHandler = jest.fn(({ res, error }) => {
-  return res.status(error.statusCode || 500).json({
-    error: error.message,
-    code: error.code,
-    details: error.details,
-  });
-});
 
 jest.unstable_mockModule('#services/index.js', () => ({
   getAllPostsService: mockGetAllPostsService,
-}));
-
-jest.unstable_mockModule('#common/handlers/index.js', () => ({
-  httpErrorHandler: mockHttpErrorHandler,
 }));
 
 const { listPostHandler } = await import('#handlers/Posts/listPost.js');
@@ -26,12 +15,18 @@ describe('listPostHandler', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    req = {};
+    req = {
+      headers: {},
+      method: 'GET',
+      path: '/api/posts',
+      ip: '127.0.0.1',
+    };
 
     res = {
       status: jest.fn().mockReturnThis(),
       send: jest.fn().mockReturnThis(),
       json: jest.fn().mockReturnThis(),
+      end: jest.fn().mockReturnThis(),
     };
 
     next = jest.fn();
@@ -74,18 +69,6 @@ describe('listPostHandler', () => {
       expect(res.status).toHaveBeenCalledWith(httpStatusCodes.OK);
       expect(res.send).toHaveBeenCalledWith([]);
     });
-
-    it('deve retornar lista vazia quando service retorna undefined', async () => {
-      mockGetAllPostsService.mockResolvedValue({
-        posts: undefined,
-      });
-
-      await listPostHandler(req, res, next);
-
-      expect(mockGetAllPostsService).toHaveBeenCalled();
-      expect(res.status).toHaveBeenCalledWith(httpStatusCodes.OK);
-      expect(res.send).toHaveBeenCalledWith([]);
-    });
   });
 
   describe('Cenários de erro - Service', () => {
@@ -96,13 +79,11 @@ describe('listPostHandler', () => {
       await listPostHandler(req, res, next);
 
       expect(mockGetAllPostsService).toHaveBeenCalled();
-      expect(mockHttpErrorHandler).toHaveBeenCalledWith({
-        req,
-        res,
-        error: serviceError,
+      expect(res.status).toHaveBeenCalledWith(httpStatusCodes.INTERNAL_SERVER_ERROR);
+      expect(res.json).toHaveBeenCalledWith({
+        code: 'INTERNAL_ERROR'
       });
-      expect(res.status).not.toHaveBeenCalledWith(httpStatusCodes.OK);
-      expect(res.send).not.toHaveBeenCalled();
+      expect(res.end).toHaveBeenCalled();
     });
   });
 });

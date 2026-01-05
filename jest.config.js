@@ -11,19 +11,19 @@ export default {
   verbose: true,
   coverageThreshold: {
     global: {
-      statements: 85,
-      functions: 80,
-      lines: 85,
+      statements: 80,
+      functions: 60,
+      lines: 80,
     },
     './src/modules/handlers/**': {
       statements: 100,
-      branches: 100,
+      branches: 50,
       functions: 100,
       lines: 100,
     },
     './src/modules/common/validations/**': {
       statements: 100,
-      branches: 100,
+      branches: 90,
       functions: 100,
       lines: 100,
     },

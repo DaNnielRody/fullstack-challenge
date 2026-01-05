@@ -29,3 +29,5 @@ export {
   transformDatabaseError,
   handleServiceError,
 } from './database/databaseErrorTransformer.js';
+
+export { httpErrorHandler } from './handlers/http-error-handler.js';
