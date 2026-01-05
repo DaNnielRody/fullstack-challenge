@@ -38,7 +38,8 @@
   },
   "scripts": {
     "start": "node ./src/app.js",
-    "dev": "nodemon ./src/app.js"
+    "dev": "nodemon ./src/app.js",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest"
   },
   "author": "Daniel Rody de Oliveira",
   "license": "ISC"
