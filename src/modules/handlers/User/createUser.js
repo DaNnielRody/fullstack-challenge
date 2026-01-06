@@ -9,6 +9,31 @@ import {
   validateStringAndThrow,
 } from '#common/validations/index.js';
 
+/**
+ * Cria um novo usuário no sistema.
+ *
+ * @description
+ * Endpoint responsável por criar um novo usuário com validações de email, senha e nome.
+ * A senha é criptografada antes de ser armazenada no banco de dados.
+ *
+ * @param {Object} req.body - Dados do usuário a ser criado
+ * @param {string} req.body.user_email - Email do usuário (obrigatório, deve ser válido e único)
+ * @param {string} req.body.user_password - Senha do usuário (obrigatória, mínimo 8 caracteres, deve conter número e caractere especial)
+ * @param {string} req.body.full_name - Nome completo do usuário (obrigatório)
+ *
+ * @returns {Object} 201 - Usuário criado com sucesso
+ * @returns {Object} 400 - Erro de validação (email inválido, senha fraca, campos obrigatórios faltando)
+ * @returns {Object} 409 - Email já existe no sistema
+ * @returns {Object} 500 - Erro interno do servidor
+ *
+ * @example
+ * // Request body
+ * {
+ *   "user_email": "usuario@example.com",
+ *   "user_password": "Senha123!",
+ *   "full_name": "João Silva"
+ * }
+ */
 const createUserHandler = async (req, res, next) => {
   try {
     const { user_email, user_password, full_name } = req.body;

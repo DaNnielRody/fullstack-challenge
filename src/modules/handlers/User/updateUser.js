@@ -10,6 +10,25 @@ import {
   validateStringAndThrow,
 } from '#common/validations/index.js';
 
+/**
+ * Atualiza completamente um usuário existente.
+ *
+ * @description
+ * Realiza atualização completa (PUT) de um usuário. Todos os campos devem ser fornecidos.
+ * A senha é criptografada antes de ser armazenada. O email deve ser único no sistema.
+ *
+ * @param {string} req.params.id - ID do usuário a ser atualizado (deve ser um número inteiro positivo)
+ * @param {Object} req.body - Dados completos do usuário
+ * @param {string} req.body.user_email - Email do usuário (obrigatório, deve ser válido e único)
+ * @param {string} req.body.user_password - Senha do usuário (obrigatória, mínimo 8 caracteres, deve conter número e caractere especial)
+ * @param {string} req.body.full_name - Nome completo do usuário (obrigatório)
+ *
+ * @returns {Object} 200 - Usuário atualizado com sucesso
+ * @returns {Object} 400 - Erro de validação (ID inválido, email inválido, senha fraca, campos obrigatórios faltando)
+ * @returns {Object} 404 - Usuário não encontrado
+ * @returns {Object} 409 - Email já existe no sistema
+ * @returns {Object} 500 - Erro interno do servidor
+ */
 const updateUserHandler = async (req, res, next) => {
   try {
     const user_id = validatePositiveIntegerAndThrow(

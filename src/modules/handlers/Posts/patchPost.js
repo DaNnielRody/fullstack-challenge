@@ -8,6 +8,24 @@ import {
   validatePositiveIntegerAndThrow,
 } from '#common/validations/index.js';
 
+/**
+ * Atualiza parcialmente um post existente.
+ *
+ * @description
+ * Realiza atualização parcial (PATCH) de um post. Apenas os campos fornecidos serão atualizados.
+ * Pelo menos um campo deve ser fornecido. O autor (author_id) deve existir no sistema se for fornecido.
+ * O texto do post pode ter até 200 caracteres se for fornecido.
+ *
+ * @param {string} req.params.id - ID do post a ser atualizado (deve ser um número inteiro positivo)
+ * @param {Object} req.body - Campos a serem atualizados (pelo menos um obrigatório)
+ * @param {number} [req.body.author_id] - ID do autor do post (opcional, deve ser um número inteiro positivo e existir no sistema se fornecido)
+ * @param {string} [req.body.post_text] - Texto do post (opcional, máximo 200 caracteres se fornecido)
+ *
+ * @returns {Object} 200 - Post atualizado com sucesso
+ * @returns {Object} 400 - Erro de validação (ID inválido, nenhum campo fornecido, post_text vazio, author_id inválido)
+ * @returns {Object} 404 - Post ou autor não encontrado
+ * @returns {Object} 500 - Erro interno do servidor
+ */
 const patchPostHandler = async (req, res, next) => {
   try {
     const post_id = validatePositiveIntegerAndThrow(
