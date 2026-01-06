@@ -52,7 +52,7 @@
 
 O diagrama abaixo representa o fluxo de execução de uma requisição do ponto de entrada até a resposta final, incluindo validações, regras de negócio e tratamento de erros.
 
-![Application Flow Diagram](./diagrams/application-flow.png)
+![Application Flow Diagram](/docs/diagrams/application-flow.png)
 
 ## Descrição do Flow
 
