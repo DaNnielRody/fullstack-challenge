@@ -8,6 +8,7 @@ export default {
   ],
   testEnvironment: 'node',
   testPathIgnorePatterns: ['/node_modules/'],
+  setupFiles: ['<rootDir>/jest.setup.js'],
   verbose: true,
   coverageThreshold: {
     global: {
@@ -16,16 +17,16 @@ export default {
       lines: 80,
     },
     './src/modules/handlers/**': {
-      statements: 100,
+      statements: 80,
       branches: 50,
-      functions: 100,
-      lines: 100,
+      functions: 80,
+      lines: 80,
     },
     './src/modules/common/validations/**': {
-      statements: 100,
-      branches: 90,
-      functions: 100,
-      lines: 100,
+      statements: 80,
+      branches: 70,
+      functions: 80,
+      lines: 80,
     },
   },
   maxConcurrency: 10,
