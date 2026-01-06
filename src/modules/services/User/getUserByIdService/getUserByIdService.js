@@ -1,11 +1,13 @@
 import { getUsersByIdRepositories } from '#repositories/index.js';
 import { logRead, logError } from '#common/services/logger/logger.js';
 import {
+  UserNotFoundError,
   UserValidationError,
   handleServiceError,
 } from '#common/errors/index.js';
 import {
   validatePositiveIntegerAndThrow,
+  validateArrayHasOneAndThrow,
 } from '#common/validations/index.js';
 
 const getUserByIdService = async ({ user_id }) => {
@@ -23,10 +25,22 @@ const getUserByIdService = async ({ user_id }) => {
       user_id,
     });
 
-    logRead('USER', { user_id, found: users.length > 0 });
+    validateArrayHasOneAndThrow(
+      users,
+      'user',
+      UserNotFoundError,
+      logError,
+      'READ',
+      'USER',
+      { user_id }
+    );
+
+    const [user] = users;
+
+    logRead('USER', { user_id });
 
     return {
-      user: users,
+      user,
     };
   } catch (error) {
     handleServiceError('READ', 'USER', error, { user_id });
