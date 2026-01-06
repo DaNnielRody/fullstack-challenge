@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 
 const mockConsoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
 
-const { httpErrorHandler } = await import('#common/errors/handlers/http-error-handler.js');
+const { httpErrorHandler } = await import('#common/errors/handlers/httpErrorHandler.js');
 const {
   PostValidationError,
   PostNotFoundError,

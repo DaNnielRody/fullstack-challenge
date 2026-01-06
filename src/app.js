@@ -7,7 +7,7 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import config from '#modules/config.js';
 import { buildHandlers } from '#modules/index.js';
-import { loggerMiddleware } from './modules/common/middlewares/logger-middleware/logger-middleware.js';
+import { loggerMiddleware } from './modules/common/middlewares/loggerMiddleware/loggerMiddleware.js';
 import postRoutes from '#routes/Post/postRoutes.js';
 import userRoutes from '#routes/User/userRoutes.js';
 
