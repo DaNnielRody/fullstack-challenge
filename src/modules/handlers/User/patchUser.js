@@ -10,6 +10,26 @@ import {
   validateStringAndThrow,
 } from '#common/validations/index.js';
 
+/**
+ * Atualiza parcialmente um usuário existente.
+ *
+ * @description
+ * Realiza atualização parcial (PATCH) de um usuário. Apenas os campos fornecidos serão atualizados.
+ * Pelo menos um campo deve ser fornecido. A senha é criptografada se fornecida.
+ * O email deve ser único no sistema se for fornecido.
+ *
+ * @param {string} req.params.id - ID do usuário a ser atualizado (deve ser um número inteiro positivo)
+ * @param {Object} req.body - Campos a serem atualizados (pelo menos um obrigatório)
+ * @param {string} [req.body.user_email] - Email do usuário (opcional, deve ser válido e único se fornecido)
+ * @param {string} [req.body.user_password] - Senha do usuário (opcional, mínimo 8 caracteres, deve conter número e caractere especial se fornecido)
+ * @param {string} [req.body.full_name] - Nome completo do usuário (opcional)
+ *
+ * @returns {Object} 200 - Usuário atualizado com sucesso
+ * @returns {Object} 400 - Erro de validação (ID inválido, nenhum campo fornecido, email inválido, senha fraca)
+ * @returns {Object} 404 - Usuário não encontrado
+ * @returns {Object} 409 - Email já existe no sistema
+ * @returns {Object} 500 - Erro interno do servidor
+ */
 const patchUserHandler = async (req, res, next) => {
   try {
     const user_id = validatePositiveIntegerAndThrow(
